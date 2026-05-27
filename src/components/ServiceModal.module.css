@@ -1,0 +1,186 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+}
+
+.modalContainer {
+  position: relative;
+  background: #0f0f0f;
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(201, 162, 39, 0.1);
+}
+
+.modalGlow {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 100px;
+  background: rgba(201, 162, 39, 0.25);
+  filter: blur(50px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ccc;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(201, 162, 39, 0.2);
+  color: #f0c240;
+  border-color: rgba(201, 162, 39, 0.5);
+  transform: rotate(90deg);
+}
+
+.modalContent {
+  position: relative;
+  z-index: 1;
+  padding: 2.5rem;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.modalIconBox {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.2), rgba(201, 162, 39, 0.05));
+  border: 1.5px solid rgba(201, 162, 39, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #f0c240;
+  box-shadow: 0 0 20px rgba(201, 162, 39, 0.15);
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.modalDesc {
+  color: #aaa;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.modalFeatures {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.featuresTitle {
+  color: #f0c240;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.featuresList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  color: #ddd;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #f0c240, #c9a227);
+  color: #000;
+  font-weight: 700;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(201, 162, 39, 0.4);
+}
+
+@media (max-width: 640px) {
+  .modalWrapper {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+  }
+  .modalContainer {
+    max-height: 100%;
+    overflow-y: auto;
+  }
+  .modalContent {
+    padding: 1.5rem 1rem;
+  }
+  .btnPrimary {
+    width: 100%;
+    justify-content: center;
+  }
+}

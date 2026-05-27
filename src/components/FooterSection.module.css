@@ -1,0 +1,41 @@
+.footer {
+  padding: 2.6rem 0 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footerInner {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: #8e96ac;
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.logoIconSm {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  color: #090909;
+  background: linear-gradient(135deg, #f0c240, #b8831d);
+}
+
+.footerLogo strong {
+  display: block;
+  color: #fff;
+}
+
+.footerLogo p {
+  margin: 0.2rem 0 0;
+}

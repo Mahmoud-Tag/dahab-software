@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int                   @id @default(autoincrement())
+  name              String
+  email             String                @unique
+  emailVerifiedAt   DateTime?             @map("email_verified_at")
+  password          String
+  rememberToken     String?               @map("remember_token")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  personalAccessTokens PersonalAccessToken[]
+
+  @@map("users")
+}
+
+model PersonalAccessToken {
+  id            Int       @id @default(autoincrement())
+  tokenableType String    @map("tokenable_type")
+  tokenableId   Int       @map("tokenable_id")
+  name          String
+  token         String    @unique
+  abilities     String?
+  lastUsedAt    DateTime? @map("last_used_at")
+  expiresAt     DateTime? @map("expires_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [tokenableId], references: [id], onDelete: Cascade)
+
+  @@index([tokenableType, tokenableId])
+  @@map("personal_access_tokens")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  catIcon     String?
+  desc        String?  @db.Text
+  fullDesc    String?  @db.Text
+  image       String?
+  tags        Json?
+  year        String?
+  type        String?
+  language    String?
+  downloads   Int      @default(0)
+  downloadUrl String?
+  features    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("projects")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("messages")
+}

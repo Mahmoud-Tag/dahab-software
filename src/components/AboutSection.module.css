@@ -1,0 +1,94 @@
+.about {
+  padding: 6rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.aboutContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.aboutImageWrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.aboutImgGlow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, rgba(201, 162, 39, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.aboutImage {
+  width: 100%;
+  max-width: 420px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 2px solid rgba(201, 162, 39, 0.25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(201, 162, 39, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.aboutBadge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #f0c240, #c9a227);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  z-index: 2;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.aboutIntro {
+  color: #a0a0a0;
+  line-height: 1.9;
+  margin-bottom: 2rem;
+  font-size: 0.97rem;
+}
+
+.featureList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.featText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+@media (max-width: 900px) {
+  .aboutContainer {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    padding: 0 1.5rem;
+  }
+  .aboutImage {
+    max-width: 280px;
+  }
+  .aboutIntro {
+    text-align: center;
+    font-size: 0.9rem;
+  }
+}
