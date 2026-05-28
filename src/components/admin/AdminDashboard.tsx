@@ -548,6 +548,16 @@ export default function AdminDashboard() {
                             ))}
                           </div>
                           <div className="mt-5 flex items-center justify-end gap-2 border-t border-white/10 pt-4">
+                            {item.downloadUrl && (
+                              <a
+                                href={item.downloadUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-400/15 bg-amber-400/5 text-amber-200"
+                              >
+                                <i className="fas fa-download" />
+                              </a>
+                            )}
                             <button
                               type="button"
                               className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]"
