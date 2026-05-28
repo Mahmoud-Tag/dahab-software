@@ -10,6 +10,10 @@ export const storageBucket =
 
 const UPLOADS_DIR = join(process.cwd(), 'public', 'uploads', 'projects')
 
+function useSupabaseStorage(): boolean {
+  return Boolean(supabaseUrl && serviceRoleKey)
+}
+
 export function getSupabaseAdmin() {
   if (!supabaseUrl || !serviceRoleKey) {
     return null
@@ -19,8 +23,12 @@ export function getSupabaseAdmin() {
   })
 }
 
-export function getPublicStorageUrl(filename: string): string {
-  return `/uploads/projects/${filename}`
+export function getPublicStorageUrl(key: string): string {
+  if (useSupabaseStorage()) {
+    const base = supabaseUrl.replace(/\/$/, '')
+    return `${base}/storage/v1/object/public/${storageBucket}/${key}`
+  }
+  return `/uploads/projects/${key}`
 }
 
 export async function uploadProjectImage(
@@ -29,40 +37,50 @@ export async function uploadProjectImage(
 ): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer())
   const ext = file.name.split('.').pop() ?? 'jpg'
-  const safeName = `${Date.now()}-${filename.replace(/[^a-zA-Z0-9\u0600-\u06FF\u0750-\u077F.-]/g, '_')}.${ext}`
+  const safeName = `${filename.replace(/[^a-zA-Z0-9\u0600-\u06FF\u0750-\u077F.-]/g, '_')}.${ext}`
 
-  await writeFile(join(UPLOADS_DIR, safeName), buffer)
+  if (useSupabaseStorage()) {
+    const key = `projects/${Date.now()}-${safeName}`
+    const supabase = getSupabaseAdmin()!
+    const { error } = await supabase.storage
+      .from(storageBucket)
+      .upload(key, buffer, {
+        contentType: file.type,
+        upsert: false,
+      })
+    if (error) {
+      console.error('Supabase upload error:', error)
+      throw new Error('Failed to upload image')
+    }
+    return getPublicStorageUrl(key)
+  }
 
-  return getPublicStorageUrl(safeName)
+  const localName = `${Date.now()}-${safeName}`
+  await writeFile(join(UPLOADS_DIR, localName), buffer)
+  return getPublicStorageUrl(localName)
 }
 
 export async function deleteProjectImageByUrl(imageUrl: string): Promise<void> {
   if (!imageUrl) return
 
-  let filename: string | null = null
-
   const localPrefix = '/uploads/projects/'
-  const localIdx = imageUrl.indexOf(localPrefix)
-  if (localIdx !== -1) {
-    filename = imageUrl.slice(localIdx + localPrefix.length)
-  } else {
-    const remotePrefix = `/storage/v1/object/public/${storageBucket}/`
-    const remoteIdx = imageUrl.indexOf(remotePrefix)
-    if (remoteIdx !== -1) {
-      const supabase = getSupabaseAdmin()
-      if (supabase) {
-        const key = imageUrl.slice(remoteIdx + remotePrefix.length)
-        await supabase.storage.from(storageBucket).remove([key])
-        return
-      }
+  const remotePrefix = `/storage/v1/object/public/${storageBucket}/`
+
+  if (imageUrl.includes(localPrefix)) {
+    const filename = imageUrl.slice(imageUrl.indexOf(localPrefix) + localPrefix.length)
+    if (!filename) return
+    try {
+      await unlink(join(UPLOADS_DIR, filename))
+    } catch {
+      // file may already be deleted or doesn't exist
     }
+    return
   }
 
-  if (!filename) return
-
-  try {
-    await unlink(join(UPLOADS_DIR, filename))
-  } catch {
-    // file may already be deleted or doesn't exist
+  if (imageUrl.includes(remotePrefix)) {
+    const supabase = getSupabaseAdmin()
+    if (!supabase) return
+    const key = imageUrl.slice(imageUrl.indexOf(remotePrefix) + remotePrefix.length)
+    await supabase.storage.from(storageBucket).remove([key])
   }
 }
