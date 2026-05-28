@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { fetchProjects } from '@/services/projects'
+import { fetchProjects, incrementDownload } from '@/services/projects'
 import type { ProjectJson } from '@/types'
 import { portfolioTypeLabel } from '@/utils/format'
 import { normalizeJsonArray } from '@/utils/serializers'
@@ -164,6 +164,21 @@ export default function PortfolioSection() {
                       <i className="fas fa-eye" />
                       تفاصيل المشروع
                     </button>
+                    {featuredProject.downloadUrl && (
+                      <a
+                        href={featuredProject.downloadUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={styles.btnCardDownload}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          incrementDownload(featuredProject.id).catch(() => {})
+                        }}
+                      >
+                        <i className="fas fa-download" />
+                        تحميل المشروع
+                      </a>
+                    )}
                     <a href="#contact" className="btn-outline-gold">
                       أريد مشروعاً مشابهاً
                     </a>
@@ -199,6 +214,23 @@ export default function PortfolioSection() {
                         </span>
                       ))}
                     </div>
+                    {project.downloadUrl && (
+                      <div className={styles.projectCardActions}>
+                        <a
+                          href={project.downloadUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={styles.btnCardDownload}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            incrementDownload(project.id).catch(() => {})
+                          }}
+                        >
+                          <i className="fas fa-download" />
+                          {project.type === 'resource' ? 'تحميل المصدر' : 'تحميل المشروع'}
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </article>
               ))}
