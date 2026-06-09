@@ -15,6 +15,7 @@ export type ProjectJson = {
   features: string[]
   created_at: string
   updated_at: string
+  views: number
 }
 
 export type MessageJson = {

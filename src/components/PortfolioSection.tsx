@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { fetchProjects, incrementDownload } from '@/services/projects'
+import { motion } from 'framer-motion'
+import { fetchProjects } from '@/services/projects'
 import type { ProjectJson } from '@/types'
 import { portfolioTypeLabel } from '@/utils/format'
 import { normalizeJsonArray } from '@/utils/serializers'
 import ProjectModal from './ProjectModal'
-import styles from './PortfolioSection.module.css'
 
 const fallbackImages: Record<string, string> = {
   web: '/portfolio-website.png',
@@ -17,24 +17,25 @@ const fallbackImages: Record<string, string> = {
   resource: '/portfolio-system.png',
 }
 
-const tabs = [
-  { key: 'all', label: 'الكل', icon: 'fas fa-grid-2' },
-  { key: 'web', label: 'المواقع', icon: 'fas fa-globe' },
-  { key: 'app', label: 'التطبيقات', icon: 'fas fa-mobile-screen-button' },
-  { key: 'system', label: 'الأنظمة', icon: 'fas fa-chart-line' },
-  { key: 'ecommerce', label: 'المتاجر', icon: 'fas fa-bag-shopping' },
-  { key: 'resource', label: 'المصادر', icon: 'fas fa-box-open' },
-]
-
-function splitLangs(language: string | null | undefined) {
-  return (language || '')
-    .split(',')
-    .map((l) => l.trim())
-    .filter(Boolean)
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
 }
 
-export default function PortfolioSection() {
-  const [activeTab, setActiveTab] = useState('all')
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  show: { opacity: 1, y: 0 },
+}
+
+interface PortfolioSectionProps {
+  hideHeader?: boolean
+}
+
+export default function PortfolioSection({ hideHeader = false }: PortfolioSectionProps) {
+  const [activeFilter, setActiveFilter] = useState('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectJson | null>(null)
   const [projects, setProjects] = useState<ProjectJson[]>([])
@@ -46,33 +47,22 @@ export default function PortfolioSection() {
         setProjects(
           data.map((project) => ({
             ...project,
-            image:
-              project.image ||
-              fallbackImages[project.type || ''] ||
-              '/portfolio-website.png',
+            image: project.image || fallbackImages[project.type || ''] || '/portfolio-website.png',
             tags: normalizeJsonArray(project.tags),
             features: normalizeJsonArray(project.features),
-          })),
+          }))
         )
       })
       .catch((err: unknown) => {
-        const msg =
-          err instanceof Error ? err.message : 'Failed to load projects'
-        console.error(msg)
+        console.error(err instanceof Error ? err.message : 'Failed to load projects')
       })
       .finally(() => setLoading(false))
   }, [])
 
   const filteredProjects = useMemo(
-    () =>
-      activeTab === 'all'
-        ? projects
-        : projects.filter((p) => p.type === activeTab),
-    [activeTab, projects],
+    () => activeFilter === 'all' ? projects : projects.filter((p) => p.type === activeFilter),
+    [activeFilter, projects],
   )
-
-  const featuredProject = filteredProjects[0] || null
-  const secondaryProjects = filteredProjects.slice(1, 7)
 
   const openProject = (project: ProjectJson) => {
     setSelectedProject(project)
@@ -85,173 +75,130 @@ export default function PortfolioSection() {
   }
 
   const handleDownloadUpdate = (updated: ProjectJson) => {
-    setProjects((prev) =>
-      prev.map((p) => (p.id === updated.id ? { ...p, downloads: updated.downloads } : p)),
-    )
+    setProjects((prev) => prev.map((p) => (p.id === updated.id ? { ...p, downloads: updated.downloads } : p)))
     setSelectedProject(updated)
   }
 
   return (
-    <section id="portfolio" className={styles.portfolioSection}>
-      <div className={styles.portfolioShell}>
-        <div className={styles.portfolioHeading}>
+    <>
+      {!hideHeader && (
+        <div className="section-header-row" style={{ marginBottom: 48 }}>
           <div>
-            <span className={styles.portfolioKicker}>أعمال مختارة</span>
-            <h2 className="section-title" style={{ textAlign: 'right' }}>
-              نماذج تُظهر كيف يبدو المنتج عندما تُصمم كل طبقة بعناية.
+            <div className="section-label-pill">
+              <i className="fas fa-folder-open" />
+              أعمالنا
+            </div>
+            <h2 className="section-heading">
+              مشاريع تصنع <span className="heading-gradient">الفرق</span>
             </h2>
+            <p className="section-para" style={{ maxWidth: 560 }}>
+              استعرض أحدث أعمالنا ومشاريعنا الناجحة التي ساعدت عملاءنا على تحقيق أهدافهم.
+            </p>
           </div>
-          <p className={styles.portfolioDescription}>
-            نعرض هنا مجموعة من المشاريع والموارد بتجارب أكثر وضوحاً، مع ترتيب بصري يساعد الزائر
-            على فهم قيمة المشروع قبل الدخول في تفاصيله.
-          </p>
         </div>
+      )}
 
-        <div className={styles.filterTabs}>
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              className={`${styles.filterBtn} ${activeTab === tab.key ? styles.active : ''}`}
-              onClick={() => setActiveTab(tab.key)}
-            >
-              <i className={tab.icon} />
-              {tab.label}
-            </button>
+      {/* Filters */}
+      <motion.div 
+        className="portfolio-filters"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+      >
+        {[
+          { key: 'all', label: 'الكل' },
+          { key: 'web', label: 'ويب' },
+          { key: 'app', label: 'تطبيقات' },
+          { key: 'system', label: 'نظام ERP' },
+        ].map((f) => (
+          <button
+            key={f.key}
+            type="button"
+            className={`filter-btn ${activeFilter === f.key ? 'active' : ''}`}
+            onClick={() => setActiveFilter(f.key)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </motion.div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="portfolio-grid">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="premium-card skeleton" style={{ height: 380 }} />
           ))}
         </div>
+      )}
 
-        {loading && (
-          <div className={styles.loadingGrid}>
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className={styles.loadingCard} />
-            ))}
-          </div>
-        )}
-
-        {!loading && filteredProjects.length === 0 && (
-          <div className={styles.emptyState}>
-            <i className="fas fa-folder-open" />
-            <h3>لا توجد عناصر مطابقة حالياً</h3>
-            <p>يمكنك تغيير الفلتر أو العودة لاحقاً بعد إضافة المشاريع من لوحة التحكم.</p>
-          </div>
-        )}
-
-        {!loading && filteredProjects.length > 0 && (
-          <>
-            {featuredProject && (
-              <article className={styles.featuredProject}>
-                <div className={styles.featuredProjectMedia}>
-                  <img src={featuredProject.image!} alt={featuredProject.title} />
-                </div>
-                <div className={styles.featuredProjectCopy}>
-                  <div className={styles.featuredProjectChips}>
-                    <span>{featuredProject.category}</span>
-                    <span>{featuredProject.year || '2026'}</span>
-                    <span>{portfolioTypeLabel(featuredProject.type)}</span>
-                  </div>
-                  <h3>{featuredProject.title}</h3>
-                  <p>{featuredProject.fullDesc || featuredProject.desc}</p>
-                  <div className={styles.featuredProjectTags}>
-                    {splitLangs(featuredProject.language).map((lang) => (
-                      <span key={lang} className={styles.langBadgeSm}>
-                        {lang}
-                      </span>
-                    ))}
-                  </div>
-                  <div className={styles.featuredProjectActions}>
-                    <button type="button" className="btn-gold" onClick={() => openProject(featuredProject)}>
-                      <i className="fas fa-eye" />
-                      تفاصيل المشروع
-                    </button>
-                    {featuredProject.downloadUrl && (
-                      <a
-                        href={featuredProject.downloadUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={styles.btnCardDownload}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          incrementDownload(featuredProject.id).catch(() => {})
-                        }}
-                      >
-                        <i className="fas fa-download" />
-                        تحميل المشروع
-                      </a>
-                    )}
-                    <a href="#contact" className="btn-outline-gold">
-                      أريد مشروعاً مشابهاً
-                    </a>
-                  </div>
-                </div>
-              </article>
-            )}
-
-            <div className={styles.projectGrid}>
-              {secondaryProjects.map((project) => (
-                <article
-                  key={project.id}
-                  className={styles.projectCard}
-                  onClick={() => openProject(project)}
-                  onKeyDown={(e) => e.key === 'Enter' && openProject(project)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className={styles.projectCardMedia}>
-                    <img src={project.image!} alt={project.title} />
-                  </div>
-                  <div className={styles.projectCardCopy}>
-                    <div className={styles.projectCardMeta}>
-                      <span>{project.category}</span>
-                      <span>{portfolioTypeLabel(project.type)}</span>
-                    </div>
-                    <h3>{project.title}</h3>
-                    <p>{project.desc}</p>
-                    <div className={styles.projectCardTags}>
-                      {splitLangs(project.language).map((lang) => (
-                        <span key={lang} className={styles.langBadgeSm}>
-                          {lang}
-                        </span>
-                      ))}
-                    </div>
-                    {project.downloadUrl && (
-                      <div className={styles.projectCardActions}>
-                        <a
-                          href={project.downloadUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={styles.btnCardDownload}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            incrementDownload(project.id).catch(() => {})
-                          }}
-                        >
-                          <i className="fas fa-download" />
-                          {project.type === 'resource' ? 'تحميل المصدر' : 'تحميل المشروع'}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </>
-        )}
-
-        <div className={styles.portfolioCta}>
-          <p>إذا كانت لديك فكرة مشابهة، يمكننا تحويلها إلى تجربة رقمية متكاملة خاصة بعلامتك.</p>
-          <a href="#contact" className="btn-gold">
-            ابدأ مشروعك الآن
-          </a>
+      {/* Empty */}
+      {!loading && filteredProjects.length === 0 && (
+        <div className="empty-state">
+          <i className="fas fa-folder-open" />
+          <h3>لا توجد مشاريع مطابقة</h3>
+          <p>يمكنك تغيير الفلتر لاستعراض المزيد من المشاريع.</p>
         </div>
+      )}
 
+      {/* Grid */}
+      {!loading && filteredProjects.length > 0 && (
+        <motion.div 
+          className="portfolio-grid"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-50px" }}
+        >
+          {filteredProjects.map((item) => (
+            <motion.div
+              key={item.id}
+              variants={itemVariants}
+              className="premium-card portfolio-card"
+              onClick={() => openProject(item)}
+            >
+              <div className="portfolio-thumb">
+                <img src={item.image!} alt={item.title} className="project-image" />
+                <div className="portfolio-thumb-overlay">
+                  <span>عرض التفاصيل <i className="fas fa-arrow-left" /></span>
+                </div>
+              </div>
+              <div className="portfolio-info">
+                <span className="portfolio-tag">{item.category || portfolioTypeLabel(item.type)}</span>
+                <h3 className="portfolio-title">{item.title}</h3>
+                <p className="portfolio-desc">{item.desc}</p>
+                
+                <div className="tech-badges">
+                  {item.tags?.slice(0, 3).map((tag, i) => (
+                    <span key={i} className="tech-badge">{tag}</span>
+                  ))}
+                </div>
+
+                <div className="card-footer">
+                  <div className="project-meta">
+                    <span className="stats-item">
+                      <i className="fas fa-eye" /> {item.views || '99+'}
+                    </span>
+                  </div>
+                  <span className="view-btn">
+                    التفاصيل
+                    <i className="fas fa-arrow-left" />
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+
+      {selectedProject && (
         <ProjectModal
           isOpen={isModalOpen}
           project={selectedProject}
           onClose={closeModal}
           onDownload={handleDownloadUpdate}
         />
-      </div>
-    </section>
+      )}
+    </>
   )
 }

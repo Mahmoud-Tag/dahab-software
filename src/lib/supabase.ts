@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { writeFile, unlink } from 'fs/promises'
+import { mkdir, writeFile, unlink } from 'fs/promises'
 import { join } from 'path'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
@@ -10,7 +10,7 @@ export const storageBucket =
 
 const UPLOADS_DIR = join(process.cwd(), 'public', 'uploads', 'projects')
 
-function useSupabaseStorage(): boolean {
+function hasSupabaseStorage(): boolean {
   return Boolean(supabaseUrl && serviceRoleKey)
 }
 
@@ -24,7 +24,7 @@ export function getSupabaseAdmin() {
 }
 
 export function getPublicStorageUrl(key: string): string {
-  if (useSupabaseStorage()) {
+  if (hasSupabaseStorage()) {
     const base = supabaseUrl.replace(/\/$/, '')
     return `${base}/storage/v1/object/public/${storageBucket}/${key}`
   }
@@ -39,7 +39,7 @@ export async function uploadProjectImage(
   const ext = file.name.split('.').pop() ?? 'jpg'
   const safeName = `${filename.replace(/[^a-zA-Z0-9\u0600-\u06FF\u0750-\u077F.-]/g, '_')}.${ext}`
 
-  if (useSupabaseStorage()) {
+  if (hasSupabaseStorage()) {
     const key = `projects/${Date.now()}-${safeName}`
     const supabase = getSupabaseAdmin()!
     const { error } = await supabase.storage
@@ -56,6 +56,7 @@ export async function uploadProjectImage(
   }
 
   const localName = `${Date.now()}-${safeName}`
+  await mkdir(UPLOADS_DIR, { recursive: true })
   await writeFile(join(UPLOADS_DIR, localName), buffer)
   return getPublicStorageUrl(localName)
 }

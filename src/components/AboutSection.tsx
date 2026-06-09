@@ -1,41 +1,60 @@
+import Image from 'next/image'
 import styles from './AboutSection.module.css'
 
 const features = [
-  { icon: 'fas fa-robot', text: 'تطوير حلول تعتمد على الذكاء الاصطناعي' },
-  { icon: 'fas fa-code', text: 'خبرة في تطوير الويب والتطبيقات' },
-  { icon: 'fas fa-lock', text: 'خبرة في الأمن السيبراني وحماية الأنظمة' },
-  { icon: 'fas fa-shield-alt', text: 'قوة، ثقة وقابل للتطوير' },
-  { icon: 'fas fa-headset', text: 'دعم فني مستمر' },
+  { icon: '🎯', title: 'تطوير الكفاءة التشغيلية', desc: 'أنظمة مخصصة تُحسّن سير عمل فريقك' },
+  { icon: '🔒', title: 'أمان وموثوقية عالية', desc: 'حماية بياناتك بأعلى معايير التشفير' },
+  { icon: '📈', title: 'دعم مستمر وتطوير دائم', desc: 'نرافقك في كل مراحل نمو مشروعك' },
 ]
 
 export default function AboutSection() {
   return (
-    <section className={`${styles.about} gold-bg-glow`} id="about">
-      <div className={styles.aboutContainer}>
-        <div className={styles.aboutImageWrap}>
-          <div className={styles.aboutImgGlow} />
-          <img src="/about-person.png" alt="مدير دهب سوفتوير" className={styles.aboutImage} />
-          <div className={styles.aboutBadge}>
-            <i className="fas fa-medal" />
-            خبرة +5 سنوات
+    <section className={`${styles.about} reveal`} id="about">
+      <div className={`${styles.aboutInner} ${styles.sectionInner}`}>
+        <div className={styles.aboutImgWrap}>
+          <div className={styles.aboutImg}>
+            <div className={styles.aboutImgInner}>
+              <Image
+                src="/about.png"
+                alt="عن دهب سوفت وير"
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+          </div>
+          <div className={styles.aboutBadgeFloat}>
+            <div className={styles.badgeNum}>+٢٠٠</div>
+            <div className={styles.badgeLbl}>مشروع مكتمل</div>
+          </div>
+          <div className={styles.aboutBadgeFloat2}>
+            <div className={styles.badgeIcon}>⭐</div>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700 }}>4.9/5</div>
+              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>تقييم العملاء</div>
+            </div>
           </div>
         </div>
 
         <div className={styles.aboutContent}>
-          <h2 className="section-title" style={{ textAlign: 'right' }}>من نحن</h2>
-          <p className={styles.aboutIntro}>
-            نحن فريق خبراء تقنيين متخصصين في تطوير حلول رقمية مبتكرة تعتمد على أحدث التقنيات، ونسعى إلى تحويل الأفكار إلى مشاريع ناجحة ذات أثر حقيقي. نستخدم الذكاء الاصطناعي لتعزيز جودة وسرعة التطوير، مع إشراف تقني مباشر يضمن أعلى معايير الاحتراف والأمان. نقدم أنظمة وبرمجيات مخصصة وفق أعلى المعايير الاحترافية، بما يتوافق مع متطلبات ومعايير الأسواق المحلية والدولية.
+          <div className={styles.sectionLabel}>من نحن</div>
+          <h2 className={styles.sectionTitle}>نطور <span className={styles.gradientText}>تكنولوجيا</span> تصنع الفارق</h2>
+          <p className={styles.sectionSubPlus}>
+            دهب سوفت وير شركة متخصصة في تطوير البرمجيات الاحترافية، نسعى لتمكين الشركات من الازدهار في العصر الرقمي بحلول مبتكرة وموثوقة.
           </p>
-          <ul className={styles.featureList}>
+          <div className={styles.aboutFeatures}>
             {features.map((feat) => (
-              <li key={feat.text} className="feature-item">
-                <span className="icon-circle" style={{ width: 48, height: 48, fontSize: '1.1rem' }}>
-                  <i className={feat.icon} />
-                </span>
-                <span className={styles.featText}>{feat.text}</span>
-              </li>
+              <div key={feat.title} className={styles.aboutFeature}>
+                <div className={styles.featIcon}>{feat.icon}</div>
+                <div>
+                  <div className={styles.featTitle}>{feat.title}</div>
+                  <div className={styles.featDesc}>{feat.desc}</div>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
+          <div style={{ marginTop: '28px' }}>
+            <a href="#contact" className={styles.btnPrimary}>تعرف علينا أكثر →</a>
+          </div>
         </div>
       </div>
     </section>

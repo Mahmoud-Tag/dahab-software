@@ -1,0 +1,20 @@
+
+> new-dahab@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3050
+
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://127.0.0.1:3050
+- Network:       http://127.0.0.1:3050
+- Environments: .env
+✓ Ready in 682ms
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          8084
+- Dir:          D:\ai\final\new-dahab
+- Log:          .next\dev\logs\next-development.log
+
+Run taskkill /PID 8084 /F to stop it.
+[?25h
+
+D:\ai\final\new-dahab>More? 

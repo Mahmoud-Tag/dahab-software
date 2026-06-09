@@ -1,7 +1,75 @@
 import { apiFetch } from '@/lib/api-client'
 import type { ProjectJson } from '@/types'
 
-export async function fetchProjects() {
+const fallbackProjects: ProjectJson[] = [
+  {
+    id: 1,
+    title: 'منصة تجارة إلكترونية',
+    category: 'متجر إلكتروني',
+    desc: 'منصة متكاملة للبيع عبر الإنترنت مع بوابات دفع متعددة وتتبع الطلبات.',
+    fullDesc: null,
+    image: '/portfolio-ecommerce.png',
+    tags: ['React', 'Node.js', 'MongoDB'],
+    year: '2024',
+    type: 'ecommerce',
+    language: 'عربي',
+    downloads: 0,
+    downloadUrl: null,
+    features: ['دفع إلكتروني', 'تتبع الطلبات', 'لوحة تحكم'],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    views: 0,
+    catIcon: '🛒',
+  },
+  {
+    id: 2,
+    title: 'تطبيق إدارة المهام',
+    category: 'تطبيق موبايل',
+    desc: 'تطبيق ذكي لإدارة المهام والمشاريع مع إشعارات وتقارير أداء.',
+    fullDesc: null,
+    image: '/portfolio-app.png',
+    tags: ['Flutter', 'Firebase', 'Dart'],
+    year: '2024',
+    type: 'app',
+    language: 'عربي',
+    downloads: 0,
+    downloadUrl: null,
+    features: ['إشعارات ذكية', 'تقارير', 'مشاركة الفريق'],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    views: 0,
+    catIcon: '📱',
+  },
+  {
+    id: 3,
+    title: 'نظام إدارة الموارد',
+    category: 'نظام ERP',
+    desc: 'نظام متكامل لإدارة الموارد البشرية والمالية والمخزون.',
+    fullDesc: null,
+    image: '/portfolio-system.png',
+    tags: ['Next.js', 'PostgreSQL', 'Prisma'],
+    year: '2023',
+    type: 'system',
+    language: 'عربي',
+    downloads: 0,
+    downloadUrl: null,
+    features: ['إدارة المخزون', 'تقارير مالية', 'إدارة الموظفين'],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    views: 0,
+    catIcon: '⚙️',
+  },
+]
+
+export async function fetchProjects(): Promise<ProjectJson[]> {
+  try {
+    return await apiFetch<ProjectJson[]>('/api/projects')
+  } catch {
+    return fallbackProjects
+  }
+}
+
+export async function fetchAdminProjects(): Promise<ProjectJson[]> {
   return apiFetch<ProjectJson[]>('/api/projects')
 }
 

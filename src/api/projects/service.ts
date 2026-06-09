@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import { deleteProjectImageByUrl, uploadProjectImage } from '@/lib/supabase'
+import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary'
+import { deleteProjectImageByUrl } from '@/lib/supabase'
 import {
   buildProjectData,
   toProjectJson,
@@ -22,15 +23,12 @@ export async function getProject(id: number) {
 
 export async function createProject(parsed: ParsedProjectForm) {
   let imageUrl: string | null = null
+  let imagePublicId: string | null = null
+
   if (parsed.imageFile) {
-    try {
-      imageUrl = await uploadProjectImage(parsed.imageFile, parsed.title)
-    } catch (err) {
-      console.error('Image upload failed, using fallback:', err)
-    }
-    if (!imageUrl) {
-      imageUrl = `/portfolio-website.png`
-    }
+    const uploaded = await uploadToCloudinary(parsed.imageFile, parsed.title)
+    imageUrl = uploaded.url
+    imagePublicId = uploaded.publicId
   }
 
   const input: ProjectInput = {
@@ -39,6 +37,7 @@ export async function createProject(parsed: ParsedProjectForm) {
     desc: parsed.desc,
     fullDesc: parsed.fullDesc,
     image: imageUrl,
+    imagePublicId,
     tags: parsed.tags,
     year: parsed.year,
     type: parsed.type,
@@ -47,8 +46,13 @@ export async function createProject(parsed: ParsedProjectForm) {
     features: parsed.features,
   }
 
-  const project = await prisma.project.create({ data: buildProjectData(input) })
-  return toProjectJson(project)
+  try {
+    const project = await prisma.project.create({ data: buildProjectData(input) })
+    return toProjectJson(project)
+  } catch (error) {
+    if (imagePublicId) await deleteFromCloudinary(imagePublicId)
+    throw error
+  }
 }
 
 export async function updateProject(id: number, parsed: ParsedProjectForm) {
@@ -56,16 +60,20 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
   if (!existing) return null
 
   let imageUrl = existing.image
+  let imagePublicId = existing.imagePublicId
+
+  let previousImageToDelete: string | null = null
+  let previousImagePublicIdToDelete: string | null = null
+  let uploadedImagePublicIdToCleanup: string | null = null
+
   if (parsed.imageFile) {
-    try {
-      const newUrl = await uploadProjectImage(parsed.imageFile, parsed.title)
-      if (newUrl) {
-        if (existing.image) await deleteProjectImageByUrl(existing.image)
-        imageUrl = newUrl
-      }
-    } catch (err) {
-      console.error('Image upload failed, keeping existing image:', err)
-    }
+    const uploaded = await uploadToCloudinary(parsed.imageFile, parsed.title)
+    imageUrl = uploaded.url
+    imagePublicId = uploaded.publicId
+
+    previousImageToDelete = existing.image
+    previousImagePublicIdToDelete = existing.imagePublicId
+    uploadedImagePublicIdToCleanup = uploaded.publicId
   }
 
   const input: ProjectInput = {
@@ -74,6 +82,7 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     desc: parsed.desc,
     fullDesc: parsed.fullDesc,
     image: imageUrl,
+    imagePublicId,
     tags: parsed.tags,
     year: parsed.year,
     type: parsed.type,
@@ -82,18 +91,34 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     features: parsed.features,
   }
 
-  const project = await prisma.project.update({
-    where: { id },
-    data: buildProjectData(input),
-  })
-  return toProjectJson(project)
+  try {
+    const project = await prisma.project.update({
+      where: { id },
+      data: buildProjectData(input),
+    })
+
+    if (previousImagePublicIdToDelete) {
+      await deleteFromCloudinary(previousImagePublicIdToDelete)
+    } else if (previousImageToDelete) {
+      await deleteProjectImageByUrl(previousImageToDelete)
+    }
+    return toProjectJson(project)
+  } catch (error) {
+    if (uploadedImagePublicIdToCleanup) await deleteFromCloudinary(uploadedImagePublicIdToCleanup)
+    throw error
+  }
 }
 
 export async function deleteProject(id: number) {
   const existing = await prisma.project.findUnique({ where: { id } })
   if (!existing) return false
-  if (existing.image) await deleteProjectImageByUrl(existing.image)
   await prisma.project.delete({ where: { id } })
+  
+  if (existing.imagePublicId) {
+    await deleteFromCloudinary(existing.imagePublicId)
+  } else if (existing.image) {
+    await deleteProjectImageByUrl(existing.image)
+  }
   return true
 }
 

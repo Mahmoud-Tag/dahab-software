@@ -196,7 +196,6 @@ export default function AdminDashboard() {
     }
   }, [])
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (!getAdminToken()) {
       router.push('/admin/login')
@@ -205,7 +204,6 @@ export default function AdminDashboard() {
     loadData()
   }, [router, loadData])
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setSearchQuery('')
   }, [activeTab])
@@ -295,7 +293,7 @@ export default function AdminDashboard() {
                 className={`w-full rounded-[24px] border px-4 py-4 text-right transition ${
                   activeTab === tab.key
                     ? tab.active
-                    : 'border-white/10 bg-white/[0.03] hover:border-white/15 hover:bg-white/[0.06]'
+                    : 'border-white/10 bg-white/3 hover:border-white/15 hover:bg-white/6'
                 }`}
                 onClick={() => setActiveTab(tab.key)}
               >
@@ -335,7 +333,7 @@ export default function AdminDashboard() {
             </div>
             <button
               type="button"
-              className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-semibold text-white transition hover:border-white/15 hover:bg-white/[0.08] disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/15 hover:bg-white/8 disabled:opacity-60"
               disabled={refreshing}
               onClick={() => loadData(true)}
             >

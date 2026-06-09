@@ -34,7 +34,6 @@ export default function ProjectFormModal({
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
-  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (project) {
       setForm({

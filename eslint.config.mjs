@@ -9,6 +9,8 @@ const eslintConfig = defineConfig([
     rules: {
       "@next/next/no-img-element": "off",
       "@next/next/no-page-custom-font": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   // Override default ignores of eslint-config-next.
@@ -17,6 +19,7 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    ".kilo/**",
     "next-env.d.ts",
   ]),
 ]);

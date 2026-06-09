@@ -1,0 +1,118 @@
+.memberCard {
+  position: relative;
+  background: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.memberCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-lg);
+  background: #FFFFFF;
+}
+
+.cardAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gold-gradient);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 20px 20px 0 0;
+}
+
+.memberCard:hover .cardAccent {
+  opacity: 1;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(2, 6, 23, 0.08);
+  transition: all 0.4s ease;
+}
+
+.memberCard:hover .imageWrapper {
+  border-color: var(--gold);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+}
+
+.memberImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.memberCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+.memberBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.memberName {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.memberCard:hover .memberName {
+  color: var(--gold);
+}
+
+.memberRole {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.specialtyBadge {
+  display: inline-flex;
+  margin-top: 0.75rem;
+  padding: 6px 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 800;
+  border-radius: 100px;
+  letter-spacing: 0.5px;
+}
+
+.memberCard:hover .specialtyBadge {
+  background: var(--gold-gradient);
+  color: #0F172A;
+  border-color: transparent;
+}

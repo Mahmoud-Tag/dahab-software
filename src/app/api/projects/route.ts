@@ -6,6 +6,8 @@ import {
 } from '@/api/projects/parse-form'
 import { createProject, listProjects } from '@/api/projects/service'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const projects = await listProjects()

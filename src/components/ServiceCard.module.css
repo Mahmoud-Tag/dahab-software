@@ -1,21 +1,25 @@
-.svcCard {
+.svcCard,
+.featureCard {
   position: relative;
-  background: #0d0d0d;
-  border: 1px solid rgba(201, 162, 39, 0.18);
-  border-radius: 18px;
-  padding: 2rem 1.75rem 1.5rem;
+  background: #FFFFFF;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  cursor: default;
+  gap: 1.2rem;
+  cursor: pointer;
   overflow: hidden;
-  transition: border-color 0.35s, transform 0.35s, box-shadow 0.35s;
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.svcCard:hover {
-  border-color: rgba(201, 162, 39, 0.6);
-  transform: translateY(-7px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(201, 162, 39, 0.15);
+.svcCard:hover,
+.featureCard:hover {
+  transform: translateY(-8px);
+  border-color: rgba(212, 175, 55, 0.3);
+  box-shadow: var(--shadow-lg);
+  background: #FFFFFF;
 }
 
 .cardAccent {
@@ -23,37 +27,42 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #f0c240, #c9a227, transparent);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.4s ease;
-  border-radius: 18px 18px 0 0;
+  height: 4px;
+  background: var(--gold-gradient);
+  opacity: 0;
+  transition: all 0.4s ease;
+  border-radius: 20px 20px 0 0;
 }
 
-.svcCard:hover .cardAccent {
-  transform: scaleX(1);
+.svcCard:hover .cardAccent,
+.featureCard:hover .cardAccent {
+  opacity: 1;
 }
 
-.iconBox {
-  width: 62px;
-  height: 62px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.14), rgba(201, 162, 39, 0.04));
-  border: 1.5px solid rgba(201, 162, 39, 0.25);
+.iconBox,
+.featureIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  color: #f0c240;
-  transition: all 0.35s;
+  font-size: 1.8rem;
+  color: var(--gold);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   flex-shrink: 0;
 }
 
-.svcCard:hover .iconBox {
-  background: linear-gradient(135deg, rgba(201, 162, 39, 0.25), rgba(201, 162, 39, 0.08));
-  border-color: rgba(201, 162, 39, 0.6);
-  box-shadow: 0 0 18px rgba(201, 162, 39, 0.25);
+.svcCard:hover .iconBox,
+.featureCard:hover .iconBox,
+.featureCard:hover .featureIcon {
+  background: var(--gold-gradient);
+  color: #0F172A;
+  transform: scale(1.1) rotate(-5deg);
+  border-color: transparent;
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
 }
 
 .cardBody {
@@ -61,61 +70,70 @@
 }
 
 .cardTitle {
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: #f0c240;
-  margin-bottom: 0.6rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
   line-height: 1.4;
+  transition: color 0.3s ease;
+}
+
+.svcCard:hover .cardTitle,
+.featureCard:hover .cardTitle {
+  color: var(--gold);
 }
 
 .cardDesc {
-  color: #888;
-  font-size: 0.88rem;
-  line-height: 1.75;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
 }
 
 .cardFooter {
-  border-top: 1px solid rgba(201, 162, 39, 0.1);
-  padding-top: 0.9rem;
-  margin-top: 0.4rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.2rem;
+  margin-top: 0.5rem;
 }
 
 .cardLink {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  color: rgba(201, 162, 39, 0.6);
-  font-size: 0.85rem;
-  font-weight: 700;
-  transition: color 0.3s, gap 0.3s;
+  gap: 0.5rem;
+  color: var(--gold);
+  font-size: 0.9rem;
+  font-weight: 800;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .linkArrow {
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
 }
 
 .svcCard:hover .cardLink {
-  color: #f0c240;
+  color: var(--gold-dark);
+  gap: 0.75rem;
 }
 
 .svcCard:hover .linkArrow {
-  transform: translateX(-4px);
+  transform: translateX(-6px);
 }
 
 @media (max-width: 640px) {
-  .svcCard {
-    padding: 1.5rem 1.25rem 1.25rem;
+  .svcCard,
+  .featureCard {
+    padding: 1.5rem;
   }
-  .iconBox {
-    width: 54px;
-    height: 54px;
-    font-size: 1.3rem;
+  .iconBox,
+  .featureIcon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
   }
   .cardTitle {
-    font-size: 1rem;
+    font-size: 1.15rem;
   }
   .cardDesc {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 }

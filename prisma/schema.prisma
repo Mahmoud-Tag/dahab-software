@@ -47,6 +47,7 @@ model Project {
   desc        String?  @db.Text
   fullDesc    String?  @db.Text
   image       String?
+  imagePublicId String? @map("image_public_id")
   tags        Json?
   year        String?
   type        String?

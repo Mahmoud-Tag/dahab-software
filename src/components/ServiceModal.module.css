@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(2, 6, 23, 0.6);
   backdrop-filter: blur(8px);
   z-index: 9999;
   display: flex;
@@ -21,11 +21,11 @@
 
 .modalContainer {
   position: relative;
-  background: #0f0f0f;
-  border: 1px solid rgba(201, 162, 39, 0.3);
+  background: #FFFFFF;
+  border: 1px solid var(--border);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 30px rgba(201, 162, 39, 0.1);
+  box-shadow: var(--shadow-xl);
 }
 
 .modalGlow {
@@ -45,9 +45,9 @@
   position: absolute;
   top: 1.25rem;
   left: 1.25rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ccc;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -61,9 +61,9 @@
 }
 
 .closeBtn:hover {
-  background: rgba(201, 162, 39, 0.2);
-  color: #f0c240;
-  border-color: rgba(201, 162, 39, 0.5);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gold);
+  border-color: rgba(212, 175, 55, 0.3);
   transform: rotate(90deg);
 }
 
@@ -97,27 +97,27 @@
 .modalTitle {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .modalDesc {
-  color: #aaa;
+  color: var(--text-secondary);
   font-size: 1rem;
   line-height: 1.8;
   margin-bottom: 2rem;
 }
 
 .modalFeatures {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(2, 6, 23, 0.03);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
 }
 
 .featuresTitle {
-  color: #f0c240;
+  color: var(--gold);
   font-size: 1.1rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -136,7 +136,7 @@
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  color: #ddd;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.5;
 }
@@ -150,19 +150,19 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  background: linear-gradient(135deg, #f0c240, #c9a227);
-  color: #000;
+  background: var(--gold-gradient);
+  color: #0F172A;
   font-weight: 700;
   padding: 0.8rem 1.8rem;
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
 }
 
 .btnPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(201, 162, 39, 0.4);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
 }
 
 @media (max-width: 640px) {

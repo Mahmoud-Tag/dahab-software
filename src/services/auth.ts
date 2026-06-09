@@ -1,4 +1,4 @@
-import { apiFetch, setAdminToken } from '@/lib/api-client'
+import { apiFetch, clearAdminToken, setAdminToken } from '@/lib/api-client'
 import type { UserJson } from '@/types'
 
 export async function login(email: string, password: string) {
@@ -15,5 +15,7 @@ export async function logout() {
     await apiFetch<void>('/api/logout', { method: 'POST', auth: true })
   } catch {
     /* ignore */
+  } finally {
+    clearAdminToken()
   }
 }
