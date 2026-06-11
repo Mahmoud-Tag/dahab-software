@@ -73,3 +73,21 @@ model Message {
   @@index([createdAt])
   @@map("messages")
 }
+
+model TeamMember {
+  id            Int      @id @default(autoincrement())
+  name          String
+  role          String
+  image         String?
+  imagePublicId String?  @map("image_public_id")
+  specialty     String?
+  email         String?
+  phone         String?
+  linkedin      String?
+  github        String?
+  twitter       String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("team_members")
+}

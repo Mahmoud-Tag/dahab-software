@@ -2,16 +2,34 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { fetchTeamMembers } from '@/services/team'
+import type { TeamMemberJson } from '@/types'
 import TeamMemberCard from './TeamMemberCard'
 
-const teamMembers = [
-  { name: 'إسلام نادى أبواليزيد', role: 'مؤسس ومدير تنفيذي', image: '/team/ahmed.jpg', specialty: 'Strategy' },
-  { name: 'محمود تاج الدين', role: 'مهندس برمجة أولى', image: '/mee.png', specialty: 'Full Stack' },
-  { name: 'محمد علي', role: 'مصمم تجربة مستخدم', image: '/team/mohamed.jpg', specialty: 'UI/UX' },
-  { name: 'نور حسن', role: 'مهندس AI', image: '/team/nour.jpg', specialty: 'AI/ML' },
-]
-
 export default function TeamSection() {
+  const [teamMembers, setTeamMembers] = useState<TeamMemberJson[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+
+    fetchTeamMembers()
+      .then((members) => {
+        if (isMounted) setTeamMembers(members)
+      })
+      .catch((error) => {
+        console.error('Failed to load team members:', error)
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false)
+      })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <section className="section-team">
       <div className="page-container">
@@ -43,24 +61,39 @@ export default function TeamSection() {
           </div>
         </motion.div>
 
-        <div className="team-grid">
-          {teamMembers.map((member, i) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <TeamMemberCard
-                name={member.name}
-                role={member.role}
-                image={member.image}
-                specialty={member.specialty}
-              />
-            </motion.div>
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="section-para" style={{ textAlign: 'center' }}>
+            جاري تحميل فريق العمل...
+          </p>
+        ) : teamMembers.length > 0 ? (
+          <div className="team-grid">
+            {teamMembers.map((member, i) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: 32 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <TeamMemberCard
+                  name={member.name}
+                  role={member.role}
+                  image={member.image || '/mee.png'}
+                  specialty={member.specialty || undefined}
+                  email={member.email}
+                  phone={member.phone}
+                  linkedin={member.linkedin}
+                  github={member.github}
+                  twitter={member.twitter}
+                />
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <p className="section-para" style={{ textAlign: 'center' }}>
+            لا يوجد أعضاء فريق مضافون حالياً.
+          </p>
+        )}
       </div>
     </section>
   )

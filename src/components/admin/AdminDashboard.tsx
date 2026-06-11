@@ -6,18 +6,23 @@ import { getAdminToken, goToLogin } from '@/lib/api-client'
 import { logout as authLogout } from '@/services/auth'
 import { fetchMessages, deleteMessage } from '@/services/messages'
 import { fetchProjects, deleteProject } from '@/services/projects'
-import type { MessageJson, ProjectJson } from '@/types'
+import type { MessageJson, ProjectJson, TeamMemberJson } from '@/types'
 import { formatDate, formatNumber } from '@/utils/format'
 import ProjectFormModal from './ProjectFormModal'
+import TeamMemberFormModal from './TeamMemberFormModal'
+import { fetchTeamMembers, deleteTeamMember } from '@/services/team'
 
-type TabKey = 'projects' | 'resources' | 'messages'
+type TabKey = 'projects' | 'resources' | 'messages' | 'team'
 
 export default function AdminDashboard() {
   const router = useRouter()
   const [projects, setProjects] = useState<ProjectJson[]>([])
   const [messages, setMessages] = useState<MessageJson[]>([])
+  const [teamMembers, setTeamMembers] = useState<TeamMemberJson[]>([])
   const [showModal, setShowModal] = useState(false)
+  const [showTeamModal, setShowTeamModal] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectJson | null>(null)
+  const [selectedTeamMember, setSelectedTeamMember] = useState<TeamMemberJson | null>(null)
   const [activeTab, setActiveTab] = useState<TabKey>('projects')
   const [searchQuery, setSearchQuery] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -38,10 +43,11 @@ export default function AdminDashboard() {
       projects: projects.filter((item) => item.type !== 'resource').length,
       resources: projects.filter((item) => item.type === 'resource').length,
       messages: messages.length,
+      team: teamMembers.length,
       downloads: projects.reduce((total, item) => total + Number(item.downloads || 0), 0),
-      total: projects.length + messages.length,
+      total: projects.length + messages.length + teamMembers.length,
     }),
-    [projects, messages],
+    [projects, messages, teamMembers],
   )
 
   const tabs = useMemo(
@@ -79,6 +85,17 @@ export default function AdminDashboard() {
         badgeClass: 'border-emerald-300/20 bg-emerald-400/10 text-emerald-100',
         iconClass: 'bg-emerald-400/12 text-emerald-100 ring-emerald-300/20',
       },
+      {
+        key: 'team' as const,
+        label: 'فريق العمل',
+        desc: 'أعضاء الفريق والخبراء.',
+        icon: 'fas fa-users',
+        count: stats.team,
+        active: 'border-indigo-300/25 bg-indigo-400/10',
+        pill: 'border-indigo-300/20 bg-indigo-400/10 text-indigo-100',
+        badgeClass: 'border-indigo-300/20 bg-indigo-400/10 text-indigo-100',
+        iconClass: 'bg-indigo-400/12 text-indigo-100 ring-indigo-300/20',
+      },
     ],
     [stats],
   )
@@ -110,15 +127,28 @@ export default function AdminDashboard() {
         )
   }, [messages, searchQuery])
 
+  const filteredTeam = useMemo(() => {
+    const query = normalize(searchQuery)
+    return !query
+      ? teamMembers
+      : teamMembers.filter((member) =>
+          [member.name, member.role, member.specialty].some((field) =>
+            normalize(field).includes(query),
+          ),
+        )
+  }, [teamMembers, searchQuery])
+
   const canCreate = activeTab !== 'messages'
   const primaryActionLabel =
-    activeTab === 'resources' ? 'إضافة مصدر جديد' : 'إضافة مشروع جديد'
+    activeTab === 'resources' ? 'إضافة مصدر جديد' : activeTab === 'team' ? 'إضافة عضو جديد' : 'إضافة مشروع جديد'
   const searchPlaceholder =
     activeTab === 'messages'
       ? 'ابحث بالاسم أو البريد أو محتوى الرسالة...'
+      : activeTab === 'team'
+      ? 'ابحث بالاسم أو الوظيفة...'
       : 'ابحث بالعنوان أو التصنيف أو الوصف...'
-  const resultsLabel = `${formatNumber(activeTab === 'messages' ? filteredMessages.length : filteredItems.length)} ${
-    activeTab === 'messages' ? 'رسالة' : activeTab === 'resources' ? 'مورد' : 'مشروع'
+  const resultsLabel = `${formatNumber(activeTab === 'messages' ? filteredMessages.length : activeTab === 'team' ? filteredTeam.length : filteredItems.length)} ${
+    activeTab === 'messages' ? 'رسالة' : activeTab === 'resources' ? 'مورد' : activeTab === 'team' ? 'عضو' : 'مشروع'
   } في العرض الحالي`
   const lastUpdatedLabel = lastUpdated ? formatDate(lastUpdated) : 'لم يتم التحديث بعد'
 
@@ -172,9 +202,10 @@ export default function AdminDashboard() {
     setErrorMessage('')
 
     try {
-      const [projectsResult, messagesResult] = await Promise.allSettled([
+      const [projectsResult, messagesResult, teamResult] = await Promise.allSettled([
         fetchProjects(),
         fetchMessages(),
+        fetchTeamMembers(),
       ])
       if (projectsResult.status === 'fulfilled') setProjects(projectsResult.value)
       else setErrorMessage('تعذر تحميل المشاريع حالياً.')
@@ -182,6 +213,11 @@ export default function AdminDashboard() {
       else
         setErrorMessage((prev) =>
           prev ? `${prev} وتعذر تحميل الرسائل أيضاً.` : 'تعذر تحميل الرسائل حالياً.',
+        )
+      if (teamResult.status === 'fulfilled') setTeamMembers(teamResult.value)
+      else
+        setErrorMessage((prev) =>
+          prev ? `${prev} وتعذر تحميل بيانات الفريق أيضاً.` : 'تعذر تحميل بيانات الفريق حالياً.',
         )
       setLastUpdated(new Date().toISOString())
     } catch (err: unknown) {
@@ -230,6 +266,20 @@ export default function AdminDashboard() {
       await loadData(true)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'تعذر حذف الرسالة'
+      setErrorMessage(msg)
+    } finally {
+      setDeletingKey('')
+    }
+  }
+
+  const handleDeleteTeamMember = async (id: number) => {
+    if (!confirm('هل تريد حذف هذا العضو نهائياً؟')) return
+    setDeletingKey(`team-${id}`)
+    try {
+      await deleteTeamMember(id)
+      await loadData(true)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'تعذر حذف العضو'
       setErrorMessage(msg)
     } finally {
       setDeletingKey('')
@@ -404,8 +454,13 @@ export default function AdminDashboard() {
                   type="button"
                   className="inline-flex items-center gap-3 rounded-2xl bg-amber-400 px-5 py-3 font-black text-slate-950"
                   onClick={() => {
-                    setSelectedProject(null)
-                    setShowModal(true)
+                    if (activeTab === 'team') {
+                      setSelectedTeamMember(null)
+                      setShowTeamModal(true)
+                    } else {
+                      setSelectedProject(null)
+                      setShowModal(true)
+                    }
                   }}
                 >
                   <i className="fas fa-plus" />
@@ -506,6 +561,58 @@ export default function AdminDashboard() {
                   </div>
                 )}
               </div>
+            ) : activeTab === 'team' ? (
+              <div className="p-6">
+                {filteredTeam.length === 0 ? (
+                  <div className="rounded-[26px] border border-dashed border-white/10 px-6 py-14 text-center text-slate-500">
+                    لا يوجد أعضاء مطابقين
+                  </div>
+                ) : (
+                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {filteredTeam.map((member) => (
+                      <article
+                        key={member.id}
+                        className="flex flex-col items-center overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.03] p-6 text-center transition hover:border-indigo-400/30 hover:bg-white/[0.05]"
+                      >
+                        <div className="mb-4 h-24 w-24 overflow-hidden rounded-full border-4 border-slate-800 bg-slate-800 ring-2 ring-indigo-400/20">
+                          {member.image ? (
+                            <img src={member.image} alt={member.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-indigo-500/10 text-3xl font-black text-indigo-300">
+                              {initial(member.name)}
+                            </div>
+                          )}
+                        </div>
+                        <h4 className="text-xl font-bold text-white">{member.name}</h4>
+                        <p className="mt-1 text-sm font-semibold text-indigo-300">{member.role}</p>
+                        {member.specialty && (
+                          <p className="mt-2 rounded-full bg-slate-800 px-3 py-1 text-xs text-slate-400">{member.specialty}</p>
+                        )}
+                        <div className="mt-6 flex w-full gap-2 border-t border-white/10 pt-4">
+                          <button
+                            type="button"
+                            className="flex-1 rounded-xl bg-white/[0.05] py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                            onClick={() => {
+                              setSelectedTeamMember(member)
+                              setShowTeamModal(true)
+                            }}
+                          >
+                            تعديل
+                          </button>
+                          <button
+                            type="button"
+                            className="flex-1 rounded-xl bg-rose-500/10 py-2 text-sm font-semibold text-rose-300 transition hover:bg-rose-500/20"
+                            disabled={deletingKey === `team-${member.id}`}
+                            onClick={() => handleDeleteTeamMember(member.id)}
+                          >
+                            {deletingKey === `team-${member.id}` ? '...' : 'حذف'}
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="p-6">
                 {filteredItems.length === 0 ? (
@@ -593,6 +700,16 @@ export default function AdminDashboard() {
           onClose={() => {
             setShowModal(false)
             setSelectedProject(null)
+          }}
+          onSaved={() => loadData(true)}
+        />
+      )}
+      {showTeamModal && (
+        <TeamMemberFormModal
+          member={selectedTeamMember}
+          onClose={() => {
+            setShowTeamModal(false)
+            setSelectedTeamMember(null)
           }}
           onSaved={() => loadData(true)}
         />

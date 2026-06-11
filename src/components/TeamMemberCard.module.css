@@ -116,3 +116,37 @@
   color: #0F172A;
   border-color: transparent;
 }
+
+.socialLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  width: 100%;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.socialLink:hover {
+  background: var(--link-color, var(--gold));
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}

@@ -42,3 +42,19 @@ export type ServiceItem = {
   desc: string
   features: string[]
 }
+
+export type TeamMemberJson = {
+  id: number
+  name: string
+  role: string
+  image: string | null
+  imagePublicId: string | null
+  specialty: string | null
+  email: string | null
+  phone: string | null
+  linkedin: string | null
+  github: string | null
+  twitter: string | null
+  created_at: string
+  updated_at: string
+}

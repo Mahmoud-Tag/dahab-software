@@ -24,46 +24,12 @@ export const metadata: Metadata = {
   },
 }
 
-const teamMembers = [
-  {
-    name: 'مهندس/إسلام نادى أبواليزيد ',
-    role: 'المؤسس والمدير التنفيذي',
-    image: '/team/ahmed.jpg',
-    specialty: 'Strategy'
-  },
-  {
-    name: 'مهندس/ محمود تاج الدين',
-    role: 'مهندس برمجيات أولى',
-    image: './mee.png',
-    specialty: 'Full Stack Development'
-  },
-  {
-    name: 'محمد علي',
-    role: 'مصمم تجربة مستخدم',
-    image: '/team/mohamed.jpg',
-    specialty: 'UI/UX'
-  },
-  {
-    name: 'نور حسن',
-    role: 'مهندسة ذكاء اصطناعي',
-    image: '/team/nour.jpg',
-    specialty: 'AI'
-  },
-  {
-    name: 'خالد يوسف',
-    role: 'مطور تطبيقات جوال',
-    image: '/team/khaled.jpg',
-    specialty: 'Mobile'
-  },
-  {
-    name: 'منير أحمد',
-    role: 'أمن المعلومات',
-    image: '/team/moner.jpg',
-    specialty: 'Security'
-  }
-]
+import { prisma } from '@/lib/prisma'
 
-export default function OurTeamPage() {
+export default async function OurTeamPage() {
+  const teamMembers = await prisma.teamMember.findMany({
+    orderBy: { createdAt: 'asc' }
+  })
   return (
     <div>
       <Navbar />
@@ -86,11 +52,16 @@ export default function OurTeamPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24 }}>
             {teamMembers.map((member) => (
               <TeamMemberCard
-                key={member.name}
+                key={member.id}
                 name={member.name}
                 role={member.role}
-                image={member.image}
-                specialty={member.specialty}
+                image={member.image || '/mee.png'}
+                specialty={member.specialty || ''}
+                email={member.email}
+                phone={member.phone}
+                linkedin={member.linkedin}
+                github={member.github}
+                twitter={member.twitter}
               />
             ))}
           </div>
