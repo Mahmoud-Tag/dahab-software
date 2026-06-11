@@ -116,10 +116,6 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
 SUPABASE_STORAGE_BUCKET=projects-images
 
-# Admin seed (optional)
-ADMIN_EMAIL=admin@dahab.tech
-ADMIN_PASSWORD=admin123
-```
 
 > **Important:** If your database password contains special characters (`@`, `#`, `$`, `%`), they must be URL-encoded:
 > `@` → `%40`, `#` → `%23`, `$` → `%24`, `%` → `%25`
