@@ -31,6 +31,7 @@ export default function AdminDashboard() {
   const [refreshing, setRefreshing] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
   const [deletingKey, setDeletingKey] = useState('')
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const normalize = (value: unknown) => String(value ?? '').toLowerCase()
   const initial = (name: string) =>
@@ -319,16 +320,37 @@ export default function AdminDashboard() {
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-[1500px]">
-        <aside className="hidden w-80 shrink-0 border-l border-white/10 bg-slate-950/80 px-6 py-8 backdrop-blur-xl lg:flex lg:flex-col">
+        {mobileSidebarOpen && (
+          <button
+            type="button"
+            aria-label="إغلاق القائمة الجانبية"
+            className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
+        <aside
+          className={`fixed inset-y-0 right-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] shrink-0 flex-col border-l border-white/10 bg-slate-950/95 px-5 py-6 shadow-[-20px_0_80px_rgba(2,6,23,0.5)] backdrop-blur-xl transition-transform duration-300 lg:sticky lg:top-0 lg:z-auto lg:h-screen lg:w-80 lg:translate-x-0 lg:bg-slate-950/80 lg:px-6 lg:py-8 lg:shadow-none ${
+            mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
           <div className="rounded-[28px] border border-white/10 bg-white/[0.05] p-5 shadow-[0_24px_80px_rgba(2,6,23,0.42)]">
             <div className="flex items-center gap-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/15 text-2xl text-amber-200 ring-1 ring-amber-300/20">
                 <i className="fas fa-gem" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-xs uppercase tracking-[0.28em] text-amber-200/70">Dahab Admin</p>
                 <h1 className="mt-1 text-2xl font-black text-white">لوحة التحكم</h1>
               </div>
+              <button
+                type="button"
+                aria-label="إغلاق القائمة الجانبية"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-slate-200 lg:hidden"
+                onClick={() => setMobileSidebarOpen(false)}
+              >
+                <i className="fas fa-xmark" />
+              </button>
             </div>
             <p className="mt-4 text-sm leading-7 text-slate-400">
               واجهة أوضح لإدارة المشاريع والموارد ورسائل العملاء من مكان واحد.
@@ -345,7 +367,10 @@ export default function AdminDashboard() {
                     ? tab.active
                     : 'border-white/10 bg-white/3 hover:border-white/15 hover:bg-white/6'
                 }`}
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => {
+                  setActiveTab(tab.key)
+                  setMobileSidebarOpen(false)
+                }}
               >
                 <div className="flex items-start gap-4">
                   <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 ${tab.iconClass}`}>
@@ -411,6 +436,14 @@ export default function AdminDashboard() {
               <h1 className="mt-1 text-2xl font-black text-white">لوحة التحكم</h1>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.05] px-4 text-sm font-bold text-slate-100"
+                onClick={() => setMobileSidebarOpen(true)}
+              >
+                <i className="fas fa-bars" />
+                القائمة
+              </button>
               <button
                 type="button"
                 className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-slate-100"
