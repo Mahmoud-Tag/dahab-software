@@ -1,0 +1,15 @@
+{
+  "Common": {
+    "welcome": "أهلاً بك",
+    "language": "اللغة"
+  },
+  "Navbar": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "services": "خدماتنا",
+    "portfolio": "أعمالنا",
+    "team": "فريق العمل",
+    "whyUs": "لماذا نحن",
+    "startProject": "ابدأ مشروعك"
+  }
+}

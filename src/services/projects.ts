@@ -15,6 +15,8 @@ const fallbackProjects: ProjectJson[] = [
     language: 'عربي',
     downloads: 0,
     downloadUrl: null,
+    websiteUrl: 'https://ecommerce.example.com',
+    status: 'live',
     features: ['دفع إلكتروني', 'تتبع الطلبات', 'لوحة تحكم'],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -34,6 +36,8 @@ const fallbackProjects: ProjectJson[] = [
     language: 'عربي',
     downloads: 0,
     downloadUrl: null,
+    websiteUrl: null,
+    status: 'live',
     features: ['إشعارات ذكية', 'تقارير', 'مشاركة الفريق'],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -53,6 +57,8 @@ const fallbackProjects: ProjectJson[] = [
     language: 'عربي',
     downloads: 0,
     downloadUrl: null,
+    websiteUrl: null,
+    status: 'development',
     features: ['إدارة المخزون', 'تقارير مالية', 'إدارة الموظفين'],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -60,6 +66,7 @@ const fallbackProjects: ProjectJson[] = [
     catIcon: '⚙️',
   },
 ]
+
 
 export async function fetchProjects(): Promise<ProjectJson[]> {
   try {

@@ -130,10 +130,15 @@ export default function ProjectModal({
                     )}
 
                     <div className={styles.imgOverlayDetails}>
-                      <span className={styles.modalCatBadge}>
-                        <i className={project.catIcon || 'fas fa-folder'} />
-                        {project.category}
-                      </span>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <span className={styles.modalCatBadge}>
+                          <i className={project.catIcon || 'fas fa-folder'} />
+                          {project.category}
+                        </span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-md border border-white/10 ${project.status === 'development' ? 'bg-rose-500/80 text-white' : 'bg-emerald-500/80 text-white'}`}>
+                          {project.status === 'development' ? 'قيد التطوير' : 'متاح'}
+                        </span>
+                      </div>
                       <span className={styles.modalYear}>
                         {project.year && (
                           <>
@@ -203,6 +208,17 @@ export default function ProjectModal({
                       )}
                       
                       <div className={styles.actionGroup}>
+                        {project.websiteUrl && project.type === 'web' && (
+                          <a
+                            href={project.websiteUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="rounded-full bg-cyan-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-cyan-400"
+                          >
+                            <i className="fas fa-arrow-up-right-from-square mr-2" />
+                            زيارة الموقع
+                          </a>
+                        )}
                         {project.downloadUrl && (
                           <a
                             href={project.downloadUrl}

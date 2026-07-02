@@ -1,0 +1,15 @@
+{
+  "Common": {
+    "welcome": "Welcome",
+    "language": "Language"
+  },
+  "Navbar": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "team": "Our Team",
+    "whyUs": "Why Us",
+    "startProject": "Start Project"
+  }
+}

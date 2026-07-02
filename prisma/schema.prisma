@@ -1,24 +1,27 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["public", "auth"]
 }
 
 model User {
-  id                Int                   @id @default(autoincrement())
-  name              String
-  email             String                @unique
-  emailVerifiedAt   DateTime?             @map("email_verified_at")
-  password          String
-  rememberToken     String?               @map("remember_token")
-  createdAt         DateTime              @default(now()) @map("created_at")
-  updatedAt         DateTime              @updatedAt @map("updated_at")
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  email                String                @unique
+  emailVerifiedAt      DateTime?             @map("email_verified_at")
+  password             String
+  rememberToken        String?               @map("remember_token")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @updatedAt @map("updated_at")
   personalAccessTokens PersonalAccessToken[]
 
   @@map("users")
+  @@schema("public")
 }
 
 model PersonalAccessToken {
@@ -37,29 +40,33 @@ model PersonalAccessToken {
 
   @@index([tokenableType, tokenableId])
   @@map("personal_access_tokens")
+  @@schema("public")
 }
 
 model Project {
-  id          Int      @id @default(autoincrement())
-  title       String
-  category    String
-  catIcon     String?
-  desc        String?  @db.Text
-  fullDesc    String?  @db.Text
-  image       String?
-  imagePublicId String? @map("image_public_id")
-  tags        Json?
-  year        String?
-  type        String?
-  language    String?
-  downloads   Int      @default(0)
-  downloadUrl String?
-  features    Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id            Int      @id @default(autoincrement())
+  title         String
+  category      String
+  catIcon       String?
+  desc          String?  @db.Text
+  fullDesc      String?  @db.Text
+  image         String?
+  imagePublicId String?  @map("image_public_id")
+  tags          Json?
+  year          String?
+  type          String?
+  language      String?
+  downloads     Int      @default(0)
+  downloadUrl   String?
+  websiteUrl    String?
+  status        String?
+  features      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@index([createdAt])
   @@map("projects")
+  @@schema("public")
 }
 
 model Message {
@@ -72,6 +79,7 @@ model Message {
 
   @@index([createdAt])
   @@map("messages")
+  @@schema("public")
 }
 
 model TeamMember {
@@ -90,4 +98,5 @@ model TeamMember {
   updatedAt     DateTime @updatedAt @map("updated_at")
 
   @@map("team_members")
+  @@schema("public")
 }

@@ -26,6 +26,9 @@ export const metadata: Metadata = {
 
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering so Prisma is called at request time, not during build
+export const dynamic = 'force-dynamic'
+
 export default async function OurTeamPage() {
   const teamMembers = await prisma.teamMember.findMany({
     orderBy: { createdAt: 'asc' }

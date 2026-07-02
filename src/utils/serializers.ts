@@ -29,6 +29,8 @@ export function toProjectJson(project: Project) {
     language: project.language,
     downloads: project.downloads,
     downloadUrl: project.downloadUrl,
+    websiteUrl: project.websiteUrl,
+    status: project.status,
     features: normalizeJsonArray(project.features),
     created_at: project.createdAt.toISOString(),
     updated_at: project.updatedAt.toISOString(),
@@ -59,6 +61,8 @@ export type ProjectInput = {
   type?: string | null
   language?: string | null
   downloadUrl?: string | null
+  websiteUrl?: string | null
+  status?: string | null
   features?: string[] | null
 }
 
@@ -75,6 +79,8 @@ export function buildProjectData(input: ProjectInput): Prisma.ProjectCreateInput
     type: input.type ?? null,
     language: input.language ?? null,
     downloadUrl: input.downloadUrl ?? null,
+    websiteUrl: input.websiteUrl ?? null,
+    status: input.status ?? null,
     features: input.features ?? [],
   }
 }

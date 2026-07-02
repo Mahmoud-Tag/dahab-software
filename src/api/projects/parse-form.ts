@@ -7,6 +7,8 @@ function optionalString(formData: FormData, key: string): string | null {
   return value || null
 }
 
+const PROJECT_STATUSES = new Set(['live', 'development'])
+
 export type ParsedProjectForm = {
   title: string
   category: string
@@ -17,6 +19,8 @@ export type ParsedProjectForm = {
   type: string | null
   language: string | null
   downloadUrl: string | null
+  websiteUrl: string | null
+  status: string | null
   features: string[]
   imageFile: File | null
 }
@@ -51,6 +55,8 @@ export async function parseProjectFormData(
     type: optionalString(formData, 'type'),
     language: optionalString(formData, 'language'),
     downloadUrl: optionalString(formData, 'downloadUrl'),
+    websiteUrl: optionalString(formData, 'websiteUrl'),
+    status: optionalString(formData, 'status'),
     features,
     imageFile,
   }
@@ -77,6 +83,19 @@ export function validateProjectForm(data: ParsedProjectForm): Record<string, str
     } catch {
       errors.downloadUrl = ['يجب أن يكون رابط التحميل صالحاً.']
     }
+  }
+  if (data.websiteUrl) {
+    try {
+      const url = new URL(data.websiteUrl)
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        errors.websiteUrl = ['يجب أن يكون رابط الموقع رابط HTTP أو HTTPS صالحاً.']
+      }
+    } catch {
+      errors.websiteUrl = ['يجب أن يكون رابط الموقع صالحاً.']
+    }
+  }
+  if (data.status && !PROJECT_STATUSES.has(data.status)) {
+    errors.status = ['حالة المشروع غير صالحة.']
   }
   if (data.tags.length > 20) errors.tags = ['يجب ألا يحتوي المشروع على أكثر من 20 وسم.']
   if (data.tags.some((tag) => tag.length > 50)) errors.tags = ['يجب ألا يتجاوز كل وسم 50 حرفاً.']

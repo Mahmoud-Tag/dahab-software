@@ -12,6 +12,8 @@ export type ProjectJson = {
   language: string | null
   downloads: number
   downloadUrl: string | null
+  websiteUrl: string | null
+  status: string | null
   features: string[]
   created_at: string
   updated_at: string

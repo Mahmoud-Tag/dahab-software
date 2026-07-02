@@ -27,6 +27,8 @@ export default function ProjectFormModal({
     type: defaultType,
     language: '',
     downloadUrl: '',
+    websiteUrl: '',
+    status: 'live',
     tags: [] as string[],
     features: [] as string[],
   })
@@ -45,6 +47,8 @@ export default function ProjectFormModal({
         type: project.type || 'web',
         language: project.language || '',
         downloadUrl: project.downloadUrl || '',
+        websiteUrl: project.websiteUrl || '',
+        status: project.status || 'live',
         tags: project.tags || [],
         features: project.features || [],
       })
@@ -79,6 +83,8 @@ export default function ProjectFormModal({
     formData.append('type', form.type)
     formData.append('language', form.language)
     formData.append('downloadUrl', form.downloadUrl)
+    formData.append('websiteUrl', form.websiteUrl)
+    formData.append('status', form.status)
     formData.append('tags', JSON.stringify(form.tags))
     formData.append('features', JSON.stringify(form.features))
     if (imageFile) formData.append('image', imageFile)
@@ -205,6 +211,29 @@ export default function ProjectFormModal({
               placeholder="https://..."
               className="w-full rounded-xl border border-gray-800 bg-black p-3 text-white outline-none transition focus:border-yellow-500"
             />
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm text-gray-400">رابط الموقع</label>
+              <input
+                value={form.websiteUrl}
+                onChange={(e) => setForm({ ...form, websiteUrl: e.target.value })}
+                placeholder="https://example.com"
+                className="w-full rounded-xl border border-gray-800 bg-black p-3 text-white outline-none transition focus:border-yellow-500"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm text-gray-400">حالة المشروع</label>
+              <select
+                value={form.status}
+                onChange={(e) => setForm({ ...form, status: e.target.value })}
+                className="w-full appearance-none rounded-xl border border-gray-800 bg-black p-3 text-white outline-none transition focus:border-yellow-500"
+              >
+                <option value="live">متاح</option>
+                <option value="development">قيد التطوير</option>
+              </select>
+            </div>
           </div>
 
           <div className="space-y-2">

@@ -1,10 +1,14 @@
+/* ============================================
+   ProjectModal - نسخة كاملة مع تحسينات النص
+   ============================================ */
+
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.85); /* Deep navy tint */
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(16px);
   z-index: 9999;
   display: flex;
@@ -100,7 +104,7 @@
   border-radius: 10px;
 }
 
-/* Mockup Presentation Area */
+/* ---------- Mockup Presentation Area ---------- */
 .modalImgTop {
   position: relative;
   width: 100%;
@@ -276,6 +280,7 @@
   color: var(--text-muted);
 }
 
+/* ---------- Info Section ---------- */
 .modalInfoSection {
   padding: 0 2.5rem 2.5rem;
   background: #FFFFFF;
@@ -307,6 +312,89 @@
   font-weight: 700;
 }
 
+/* ---------- DESCRIPTION (النص الطويل) ---------- */
+/* حاوية اختيارية لتزيين منطقة النص */
+.descWrapper {
+  background: rgba(241, 245, 249, 0.5);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+
+.descText {
+  /* الأساسيات */
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 2;                /* تباعد أسطر مريح */
+  letter-spacing: 0.01em;
+  max-width: 80ch;              /* طول سطر مثالي للقراءة */
+  margin: 0 auto;               /* توسيط النص داخل الحاوية */
+}
+
+/* تنسيق الفقرات داخل الوصف */
+.descText p {
+  margin-bottom: 1.25rem;
+}
+
+/* أول فقرة (تمهيدية) */
+.descText p:first-of-type {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* حرف أول مميز (اختياري) */
+.descText p:first-of-type::first-letter {
+  font-size: 3.2rem;
+  font-weight: 900;
+  float: left;
+  line-height: 1;
+  margin-right: 0.5rem;
+  color: var(--gold);
+  font-family: serif;
+}
+
+/* القوائم داخل الوصف */
+.descText ul,
+.descText ol {
+  padding-left: 1.5rem;
+  margin: 1rem 0 1.5rem 0;
+}
+.descText li {
+  margin-bottom: 0.5rem;
+}
+
+/* الروابط */
+.descText a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.descText a:hover {
+  color: var(--gold-dark);
+}
+
+/* النص الغامق */
+.descText strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* الاقتباسات */
+.descText blockquote {
+  border-left: 4px solid var(--gold);
+  padding: 0.75rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 8px;
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+/* ---------- باقي العناصر ---------- */
 .infoLabel {
   color: var(--text-primary);
   font-size: 1.1rem;
@@ -324,13 +412,6 @@
   height: 16px;
   background: var(--gold-gradient);
   border-radius: 2px;
-}
-
-.descText {
-  color: var(--text-secondary);
-  line-height: 1.8;
-  font-size: 1rem;
-  margin-bottom: 2.5rem;
 }
 
 .modalFeatures {
@@ -458,6 +539,7 @@
   transform: translateY(-2px);
 }
 
+/* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
   .modalInfoSection {
     padding: 0 1.5rem 1.5rem;
@@ -487,5 +569,18 @@
   }
   .modalImgTop {
     min-height: 300px;
+  }
+
+  /* تحسين النص على الشاشات الصغيرة */
+  .descWrapper {
+    padding: 1rem;
+  }
+  .descText {
+    font-size: 0.95rem;
+    line-height: 1.9;
+    max-width: 100%;
+  }
+  .descText p:first-of-type::first-letter {
+    font-size: 2.4rem;
   }
 }

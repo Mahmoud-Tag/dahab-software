@@ -671,9 +671,14 @@ export default function AdminDashboard() {
                         <div className="flex flex-1 flex-col p-5">
                           <h4 className="text-xl font-black text-white">{item.title}</h4>
                           <p className="mt-2 text-sm text-slate-400">{item.year || 'بدون سنة'}</p>
-                          <p className="mt-2 w-fit rounded-full bg-amber-200/30 px-2 py-1 text-md text-white">
-                            {formatNumber(item.downloads || 0)} تحميل
-                          </p>
+                          <div className="mt-2 flex flex-wrap items-center gap-2">
+                            <p className="rounded-full bg-amber-200/30 px-2 py-1 text-md text-white">
+                              {formatNumber(item.downloads || 0)} تحميل
+                            </p>
+                            <p className={`rounded-full px-2 py-1 text-xs ${item.status === 'development' ? 'bg-rose-500/15 text-rose-100' : 'bg-emerald-500/15 text-emerald-100'}`}>
+                              {item.status === 'development' ? 'قيد التطوير' : 'متاح'}
+                            </p>
+                          </div>
                           <p className="mt-4 flex-1 text-sm leading-8 text-slate-400">{itemSummary(item)}</p>
                           <div className="mt-5 flex flex-wrap gap-2">
                             {splitLangs(item.language).map((lang) => (
@@ -686,6 +691,17 @@ export default function AdminDashboard() {
                             ))}
                           </div>
                           <div className="mt-5 flex items-center justify-end gap-2 border-t border-white/10 pt-4">
+                            {item.websiteUrl && item.type === 'web' && (
+                              <a
+                                href={item.websiteUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/15 bg-cyan-400/5 text-cyan-200"
+                                title="زيارة الموقع"
+                              >
+                                <i className="fas fa-arrow-up-right-from-square" />
+                              </a>
+                            )}
                             {item.downloadUrl && (
                               <a
                                 href={item.downloadUrl}

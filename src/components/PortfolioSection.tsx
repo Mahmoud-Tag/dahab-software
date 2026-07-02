@@ -164,7 +164,12 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
                 </div>
               </div>
               <div className="portfolio-info">
-                <span className="portfolio-tag">{item.category || portfolioTypeLabel(item.type)}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span className="portfolio-tag" style={{ margin: 0 }}>{item.category || portfolioTypeLabel(item.type)}</span>
+                  <span className={`px-2 py-1 rounded text-xs font-bold ${item.status === 'development' ? 'bg-rose-500/20 text-rose-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
+                    {item.status === 'development' ? 'قيد التطوير' : 'متاح'}
+                  </span>
+                </div>
                 <h3 className="portfolio-title">{item.title}</h3>
                 <p className="portfolio-desc">{item.desc}</p>
                 

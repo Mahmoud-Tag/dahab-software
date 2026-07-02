@@ -43,6 +43,8 @@ export async function createProject(parsed: ParsedProjectForm) {
     type: parsed.type,
     language: parsed.language,
     downloadUrl: parsed.downloadUrl,
+    websiteUrl: parsed.websiteUrl,
+    status: parsed.status,
     features: parsed.features,
   }
 
@@ -88,6 +90,8 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     type: parsed.type,
     language: parsed.language,
     downloadUrl: parsed.downloadUrl,
+    websiteUrl: parsed.websiteUrl,
+    status: parsed.status,
     features: parsed.features,
   }
 
