@@ -121,13 +121,6 @@ export default async function PartnershipPage({ params }: { params: Promise<{ id
               {partnership.status || 'نشط'}
             </div>
 
-            {/* نوع الشراكة (يمكن إضافته لاحقاً في النموذج) */}
-            {partnership.partnershipType && (
-              <div className="absolute right-6 top-6 rounded-full border border-white/20 bg-white/90 px-4 py-1.5 text-xs font-medium text-slate-700 shadow-sm backdrop-blur-sm">
-                {partnership.partnershipType}
-              </div>
-            )}
-
             {/* العنوان واسم الشريك فوق الصورة */}
             <div className="absolute bottom-6 left-6 right-6">
               <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">
