@@ -6,22 +6,31 @@ import { getAdminToken, goToLogin } from '@/lib/api-client'
 import { logout as authLogout } from '@/services/auth'
 import { fetchMessages, deleteMessage } from '@/services/messages'
 import { fetchProjects, deleteProject } from '@/services/projects'
-import type { MessageJson, ProjectJson, TeamMemberJson } from '@/types'
+import { fetchPartnerships, deletePartnership } from '@/services/partnerships'
+import type {
+  MessageJson,
+  ProjectJson,
+  PartnershipJson,
+  TeamMemberJson,
+} from '@/types'
 import { formatDate, formatNumber } from '@/utils/format'
 import ProjectFormModal from './ProjectFormModal'
+import PartnershipFormModal from './PartnershipFormModal'
 import TeamMemberFormModal from './TeamMemberFormModal'
 import { fetchTeamMembers, deleteTeamMember } from '@/services/team'
 
-type TabKey = 'projects' | 'resources' | 'messages' | 'team'
+type TabKey = 'projects' | 'resources' | 'messages' | 'team' | 'partnerships'
 
 export default function AdminDashboard() {
   const router = useRouter()
   const [projects, setProjects] = useState<ProjectJson[]>([])
+  const [partnerships, setPartnerships] = useState<PartnershipJson[]>([])
   const [messages, setMessages] = useState<MessageJson[]>([])
   const [teamMembers, setTeamMembers] = useState<TeamMemberJson[]>([])
   const [showModal, setShowModal] = useState(false)
   const [showTeamModal, setShowTeamModal] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectJson | null>(null)
+  const [selectedPartnership, setSelectedPartnership] = useState<PartnershipJson | null>(null)
   const [selectedTeamMember, setSelectedTeamMember] = useState<TeamMemberJson | null>(null)
   const [activeTab, setActiveTab] = useState<TabKey>('projects')
   const [searchQuery, setSearchQuery] = useState('')
@@ -43,12 +52,13 @@ export default function AdminDashboard() {
     () => ({
       projects: projects.filter((item) => item.type !== 'resource').length,
       resources: projects.filter((item) => item.type === 'resource').length,
+      partnerships: partnerships.length,
       messages: messages.length,
       team: teamMembers.length,
       downloads: projects.reduce((total, item) => total + Number(item.downloads || 0), 0),
-      total: projects.length + messages.length + teamMembers.length,
+      total: projects.length + partnerships.length + messages.length + teamMembers.length,
     }),
-    [projects, messages, teamMembers],
+    [projects, partnerships, messages, teamMembers],
   )
 
   const tabs = useMemo(
@@ -97,6 +107,17 @@ export default function AdminDashboard() {
         badgeClass: 'border-indigo-300/20 bg-indigo-400/10 text-indigo-100',
         iconClass: 'bg-indigo-400/12 text-indigo-100 ring-indigo-300/20',
       },
+      {
+        key: 'partnerships' as const,
+        label: 'الشراكات',
+        desc: 'الوكالات والشركاء الرسميين.',
+        icon: 'fas fa-handshake',
+        count: stats.partnerships,
+        active: 'border-fuchsia-300/25 bg-fuchsia-400/10',
+        pill: 'border-fuchsia-300/20 bg-fuchsia-400/10 text-fuchsia-100',
+        badgeClass: 'border-fuchsia-300/20 bg-fuchsia-400/10 text-fuchsia-100',
+        iconClass: 'bg-fuchsia-400/12 text-fuchsia-100 ring-fuchsia-300/20',
+      },
     ],
     [stats],
   )
@@ -104,10 +125,8 @@ export default function AdminDashboard() {
   const activeTabMeta = tabs.find((tab) => tab.key === activeTab) || tabs[0]
 
   const filteredItems = useMemo(() => {
-    let list = projects
-    if (activeTab === 'projects') list = list.filter((item) => item.type !== 'resource')
-    if (activeTab === 'resources') list = list.filter((item) => item.type === 'resource')
     const query = normalize(searchQuery)
+    const list = activeTab === 'resources' ? projects.filter((item) => item.type === 'resource') : projects.filter((item) => item.type !== 'resource')
     return !query
       ? list
       : list.filter((item) =>
@@ -116,6 +135,17 @@ export default function AdminDashboard() {
           ),
         )
   }, [activeTab, projects, searchQuery])
+
+  const filteredPartnerships = useMemo(() => {
+    const query = normalize(searchQuery)
+    return !query
+      ? partnerships
+      : partnerships.filter((item) =>
+          [item.title, item.partnerName, item.desc, item.fullDesc, item.websiteUrl, item.status].some((field) =>
+            normalize(field).includes(query),
+          ),
+        )
+  }, [partnerships, searchQuery])
 
   const filteredMessages = useMemo(() => {
     const query = normalize(searchQuery)
@@ -141,15 +171,39 @@ export default function AdminDashboard() {
 
   const canCreate = activeTab !== 'messages'
   const primaryActionLabel =
-    activeTab === 'resources' ? 'إضافة مصدر جديد' : activeTab === 'team' ? 'إضافة عضو جديد' : 'إضافة مشروع جديد'
+    activeTab === 'resources'
+      ? 'إضافة مصدر جديد'
+      : activeTab === 'team'
+      ? 'إضافة عضو جديد'
+      : activeTab === 'partnerships'
+      ? 'إضافة شراكة جديدة'
+      : 'إضافة مشروع جديد'
   const searchPlaceholder =
     activeTab === 'messages'
       ? 'ابحث بالاسم أو البريد أو محتوى الرسالة...'
       : activeTab === 'team'
       ? 'ابحث بالاسم أو الوظيفة...'
+      : activeTab === 'partnerships'
+      ? 'ابحث بالعنوان أو اسم الشريك أو الرابط...'
       : 'ابحث بالعنوان أو التصنيف أو الوصف...'
-  const resultsLabel = `${formatNumber(activeTab === 'messages' ? filteredMessages.length : activeTab === 'team' ? filteredTeam.length : filteredItems.length)} ${
-    activeTab === 'messages' ? 'رسالة' : activeTab === 'resources' ? 'مورد' : activeTab === 'team' ? 'عضو' : 'مشروع'
+  const resultsLabel = `${formatNumber(
+    activeTab === 'messages'
+      ? filteredMessages.length
+      : activeTab === 'team'
+      ? filteredTeam.length
+      : activeTab === 'partnerships'
+      ? filteredPartnerships.length
+      : filteredItems.length,
+  )} ${
+    activeTab === 'messages'
+      ? 'رسالة'
+      : activeTab === 'resources'
+      ? 'مورد'
+      : activeTab === 'team'
+      ? 'عضو'
+      : activeTab === 'partnerships'
+      ? 'شراكة'
+      : 'مشروع'
   } في العرض الحالي`
   const lastUpdatedLabel = lastUpdated ? formatDate(lastUpdated) : 'لم يتم التحديث بعد'
 
@@ -171,6 +225,15 @@ export default function AdminDashboard() {
       icon: 'fas fa-toolbox',
       shell: 'border-amber-300/15 bg-amber-400/8',
       iconClass: 'bg-amber-400/12 text-amber-100 ring-amber-300/20',
+    },
+    {
+      key: 'partnerships',
+      label: 'الشراكات',
+      value: stats.partnerships,
+      hint: 'الوكالات والشركاء الرسميين.',
+      icon: 'fas fa-handshake',
+      shell: 'border-fuchsia-300/15 bg-fuchsia-400/8',
+      iconClass: 'bg-fuchsia-400/12 text-fuchsia-100 ring-fuchsia-300/20',
     },
     {
       key: 'downloads',
@@ -203,13 +266,19 @@ export default function AdminDashboard() {
     setErrorMessage('')
 
     try {
-      const [projectsResult, messagesResult, teamResult] = await Promise.allSettled([
+        const [projectsResult, partnershipsResult, messagesResult, teamResult] = await Promise.allSettled([
         fetchProjects(),
+        fetchPartnerships(),
         fetchMessages(),
         fetchTeamMembers(),
       ])
       if (projectsResult.status === 'fulfilled') setProjects(projectsResult.value)
       else setErrorMessage('تعذر تحميل المشاريع حالياً.')
+      if (partnershipsResult.status === 'fulfilled') setPartnerships(partnershipsResult.value)
+      else
+        setErrorMessage((prev) =>
+          prev ? `${prev} وتعذر تحميل الشراكات أيضاً.` : 'تعذر تحميل الشراكات حالياً.',
+        )
       if (messagesResult.status === 'fulfilled') setMessages(messagesResult.value)
       else
         setErrorMessage((prev) =>
@@ -253,6 +322,20 @@ export default function AdminDashboard() {
       await loadData(true)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'تعذر حذف العنصر'
+      setErrorMessage(msg)
+    } finally {
+      setDeletingKey('')
+    }
+  }
+
+  const handleDeletePartnership = async (id: number) => {
+    if (!confirm('هل تريد حذف هذه الشراكة نهائياً؟')) return
+    setDeletingKey(`partnership-${id}`)
+    try {
+      await deletePartnership(id)
+      await loadData(true)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'تعذر حذف الشراكة'
       setErrorMessage(msg)
     } finally {
       setDeletingKey('')
@@ -490,6 +573,9 @@ export default function AdminDashboard() {
                     if (activeTab === 'team') {
                       setSelectedTeamMember(null)
                       setShowTeamModal(true)
+                    } else if (activeTab === 'partnerships') {
+                      setSelectedPartnership(null)
+                      setShowModal(true)
                     } else {
                       setSelectedProject(null)
                       setShowModal(true)
@@ -646,6 +732,77 @@ export default function AdminDashboard() {
                   </div>
                 )}
               </div>
+            ) : activeTab === 'partnerships' ? (
+              <div className="p-6">
+                {filteredPartnerships.length === 0 ? (
+                  <div className="rounded-[26px] border border-dashed border-white/10 px-6 py-14 text-center text-slate-500">
+                    لا توجد شراكات مطابقة
+                  </div>
+                ) : (
+                  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                    {filteredPartnerships.map((partnership) => (
+                      <article
+                        key={partnership.id}
+                        className="flex h-full flex-col overflow-hidden rounded-[26px] border border-white/10 bg-white/[0.03]"
+                      >
+                        <div className="relative h-48 overflow-hidden border-b border-white/10 bg-slate-900">
+                          {partnership.image ? (
+                            <img src={partnership.image} alt={partnership.title} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-amber-200">
+                              <i className="fas fa-handshake text-4xl" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-1 flex-col p-5">
+                          <h4 className="text-xl font-black text-white">{partnership.title}</h4>
+                          <p className="mt-2 text-sm font-semibold text-slate-300">{partnership.partnerName}</p>
+                          {partnership.desc && (
+                            <p className="mt-3 text-sm leading-7 text-slate-400">{partnership.desc}</p>
+                          )}
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {partnership.status && (
+                              <span className="rounded-full bg-fuchsia-500/10 px-3 py-1 text-xs text-fuchsia-200">
+                                {partnership.status}
+                              </span>
+                            )}
+                            {partnership.websiteUrl && (
+                              <a
+                                href={partnership.websiteUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-cyan-200 transition hover:bg-white/10"
+                              >
+                                زيارة الموقع
+                              </a>
+                            )}
+                          </div>
+                          <div className="mt-5 flex items-center justify-end gap-2 border-t border-white/10 pt-4">
+                            <button
+                              type="button"
+                              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04]"
+                              onClick={() => {
+                                setSelectedPartnership(partnership)
+                                setShowModal(true)
+                              }}
+                            >
+                              <i className="fas fa-pen-to-square" />
+                            </button>
+                            <button
+                              type="button"
+                              className="flex h-11 w-11 items-center justify-center rounded-2xl border border-rose-400/15 bg-rose-500/10 text-rose-100"
+                              disabled={deletingKey === `partnership-${partnership.id}`}
+                              onClick={() => handleDeletePartnership(partnership.id)}
+                            >
+                              <i className={`fas ${deletingKey === `partnership-${partnership.id}` ? 'fa-spinner fa-spin' : 'fa-trash'}`} />
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="p-6">
                 {filteredItems.length === 0 ? (
@@ -742,7 +899,16 @@ export default function AdminDashboard() {
         </main>
       </div>
 
-      {showModal && (
+      {showModal && activeTab === 'partnerships' ? (
+        <PartnershipFormModal
+          partnership={selectedPartnership}
+          onClose={() => {
+            setShowModal(false)
+            setSelectedPartnership(null)
+          }}
+          onSaved={() => loadData(true)}
+        />
+      ) : showModal ? (
         <ProjectFormModal
           project={selectedProject}
           defaultType={activeTab === 'resources' ? 'resource' : 'web'}
@@ -752,7 +918,7 @@ export default function AdminDashboard() {
           }}
           onSaved={() => loadData(true)}
         />
-      )}
+      ) : null}
       {showTeamModal && (
         <TeamMemberFormModal
           member={selectedTeamMember}

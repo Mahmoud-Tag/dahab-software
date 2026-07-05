@@ -8,6 +8,7 @@ const navLinks = [
   { label: 'الرئيسية', href: '/' },
   { label: 'من نحن', href: '/about' },
   { label: 'خدماتنا', href: '/services' },
+  { label: 'الشراكات', href: '/partnerships' },
   { label: 'أعمالنا', href: '/portfolio' },
   { label: 'فريق العمل', href: '/ourTeam' },
   { label: 'لماذا نحن', href: '/case-studies' },

@@ -60,6 +60,18 @@ const projects = [
   },
 ]
 
+const partnerships = [
+  {
+    title: 'شراكة استراتيجية مع شركة البحر الأحمر',
+    partnerName: 'شركة البحر الأحمر للخدمات',
+    desc: 'تعاون لتطوير منصة رقمية وحلول متكاملة.',
+    fullDesc: '<p>بدأت الشراكة في 2024 بهدف تنفيذ مشاريع تقنية وحلول سحابية متقدمة، تشمل تصميم وبناء نظم معلومات وإدارة بيانات العملاء.</p>',
+    image: '/partnership-1.png',
+    websiteUrl: 'https://example-partner.com',
+    status: 'نشط',
+  },
+]
+
 async function main() {
   const email = process.env.ADMIN_EMAIL ?? 'admin@dahab.tech'
   const password = process.env.ADMIN_PASSWORD ?? 'admin123'
@@ -84,6 +96,13 @@ async function main() {
           features: project.features,
         },
       })
+    }
+  }
+
+  const partnershipCount = await prisma.partnership.count()
+  if (partnershipCount === 0) {
+    for (const p of partnerships) {
+      await prisma.partnership.create({ data: p })
     }
   }
 }

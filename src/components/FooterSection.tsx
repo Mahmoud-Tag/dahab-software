@@ -13,6 +13,7 @@ const footerLinks = {
   ],
   company: [
     { label: 'من نحن', href: '/about' },
+    { label: 'الشراكات', href: '/partnerships' },
     { label: 'أعمالنا', href: '/portfolio' },
     { label: 'لماذا نحن', href: '/case-studies' },
     { label: 'فريق العمل', href: '/ourTeam' },

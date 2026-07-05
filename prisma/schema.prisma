@@ -100,3 +100,21 @@ model TeamMember {
   @@map("team_members")
   @@schema("public")
 }
+
+model Partnership {
+  id            Int      @id @default(autoincrement())
+  title         String
+  partnerName   String
+  desc          String?  @db.Text
+  fullDesc      String?  @db.Text
+  image         String?
+  imagePublicId String?  @map("image_public_id")
+  websiteUrl    String?
+  status        String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([createdAt])
+  @@map("partnerships")
+  @@schema("public")
+}

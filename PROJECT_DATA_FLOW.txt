@@ -1,0 +1,108 @@
+مشروع دهب سوفت وير — مسارات جلب البيانات وآلية العمل
+
+1. البنية العامة:
+- التطبيق يستخدم Next.js App Router.
+- هناك مكونات عميلة (`'use client'`) تقوم بطلب البيانات عبر API.
+- هناك مسارات API في `src/app/api/partnerships` للتعامل مع CRUD للشراكات.
+- الطبقة الوسيطة للخدمات موجودة في:
+  - `src/services/partnerships.ts` للعميل
+  - `src/api/partnerships/service.ts` للخادم
+
+2. مسار عرض جميع الشراكات:
+- الصفحة الرئيسية للشراكات: `src/app/partnerships/page.tsx`.
+- داخلها تستخدم `PartnershipsSection` من `src/components/PartnershipsSection.tsx`.
+- `PartnershipsSection`:
+  - مكون عميل (`'use client'`).
+  - يستدعي `fetchPartnerships()` من `src/services/partnerships.ts`.
+  - يعرض حالة التحميل، الخطأ، أو بطاقات الشراكة.
+  - إذا لم توجد بيانات، يظهر "لا توجد شراكات مسجلة حالياً.".
+
+3. خدمة العميل لجلب الشراكات:
+- `src/services/partnerships.ts` يحتوي على:
+  - `fetchPartnerships()` => GET `/api/partnerships` بدون تفويض.
+  - `fetchPartnership(id)` => GET `/api/partnerships/{id}` مع `auth: true`.
+  - `createPartnership` و`updatePartnership` و`deletePartnership` للمشرف.
+- `apiFetch` في `src/lib/api-client.ts` يضيف رؤوس JSON، ويتعامل مع `Authorization` إذا كان `auth: true`.
+
+4. مسار API العام للشراكات:
+- `src/app/api/partnerships/route.ts` يدعم:
+  - `GET` => يستدعي `listPartnerships()` من `src/api/partnerships/service.ts`.
+  - `POST` => يتطلب مصادقة (`requireAuth`)، ثم ينشئ شراكة جديدة.
+- يتم تحويل البيانات إلى JSON باستخدام `Response.json()`.
+
+5. مسار API لشراكة مفردة:
+- `src/app/api/partnerships/[id]/route.ts` يدعم:
+  - `GET` => جلب شراكة واحدة بالرقم `id`.
+  - `PUT`/`PATCH` => تحديث شراكة مصادق عليها.
+  - `DELETE` => حذف شراكة مصادق عليها.
+- يستخدم `parsePositiveIntParam(id)` للتحقق من صحة المعرف.
+- يعالج الأخطاء ويرجع رسائل واضحة مثل `Invalid ID` و`Not found`.
+
+6. خدمة الخادم للشراكات:
+- `src/api/partnerships/service.ts` يعرّف:
+  - `listPartnerships()` => `prisma.partnership.findMany()`.
+  - `getPartnership(id)` => `prisma.partnership.findUnique()`.
+  - `createPartnership(parsed)` => `prisma.partnership.create()` مع تحميل الصورة إلى Cloudinary.
+  - `updatePartnership(id, parsed)` => `prisma.partnership.update()` مع إدارة الصورة القديمة.
+  - `deletePartnership(id)` => `prisma.partnership.delete()` مع حذف الصورة من Cloudinary أو Supabase.
+- يحول السجل إلى JSON مناسب عبر `toPartnershipJson()`.
+
+7. صفحة تفاصيل الشراكة:
+- `src/app/partnerships/[id]/page.tsx` هي صفحة ديناميكية.
+- الصفحة تقرأ `params.id` وتحوّله إلى رقم.
+- تستدعي `getPartnership(id)` مباشرة على الخادم.
+- إذا كان `id` غير صالح أو لم يوجد السجل، تعرض رسالة مناسبة.
+- إذا وجد السجل، تعرض:
+  - صورة الشراكة
+  - العنوان
+  - اسم الشريك
+  - الحالة
+  - الوصف الكامل
+  - رابط الموقع
+
+8. نموذج البيانات في قاعدة البيانات:
+- الجدول `partnerships` موجود في `prisma/schema.prisma`.
+- الحقول الأساسية:
+  - `id`, `title`, `partnerName`, `desc`, `fullDesc`, `image`, `imagePublicId`, `websiteUrl`, `status`, `createdAt`, `updatedAt`.
+- يتم توليد العميل عبر Prisma في `package.json` بعد `npm install`.
+
+9. بيانات الاختبار:
+- `prisma/seed.ts` يحتوي على بيانات تجريبية للـ `projects` و`partnerships`.
+- عند تشغيل `npm run db:seed` تُضاف الشراكات إذا كان الجدول فارغاً.
+
+10. ملخص تسلسلي لطلب صفحة الشراكة:
+- يزور المستخدم `/partnerships`.
+- `PartnershipsSection` يطلب `/api/partnerships`.
+- API route يقرأ من قاعدة البيانات عبر Prisma.
+- يعرض التطبيق قائمة البطاقات.
+- عند النقر على بطاقة، يفتح `/partnerships/{id}`.
+- صفحة التفاصيل تنفذ `getPartnership(id)` على الخادم وتعرض البيانات.
+
+11. هيكل المشروع:
+- `package.json`: إعدادات npm، سكربتات، تبعيات.
+- `next.config.ts`: إعدادات Next.js.
+- `postcss.config.mjs`, `tailwind.config.js`: إعدادات Tailwind CSS.
+- `tsconfig.json`: إعداد TypeScript.
+- `prisma/`: مخطط قاعدة البيانات وملف seed.
+  - `schema.prisma`: تعريف الجداول مثل `partnerships`, `projects`, `team_members`, `messages`, `users`.
+  - `seed.ts`: بيانات تجريبية تملأ الجداول عند التشغيل.
+- `src/`: الكود المصدر الرئيسي.
+  - `src/app/`: صفحات Next.js وواجهات App Router.
+    - `layout.tsx`: التخطيط العام للموقع.
+    - `page.tsx`: الصفحة الرئيسية.
+    - `partnerships/`: صفحة قائمة الشراكات و`
+      - `[id]/page.tsx`: صفحة تفاصيل الشراكة.
+    - أقسام أخرى مثل `about/`, `contact/`, `portfolio/`, `services/`, `admin/`.
+  - `src/components/`: مكونات واجهة المستخدم المشتركة.
+    - بطاقات وعناصر مثل `PartnershipCard.tsx`, `PartnershipsSection.tsx`, `ProjectCard.tsx`, `ServiceCard.tsx`.
+  - `src/services/`: خدمات العميل لنداءات API.
+    - `partnerships.ts`: دوال جلب/إنشاء/تحديث/حذف الشراكات.
+  - `src/api/`: منطق الخادم المساعد لواجهة برمجة التطبيقات.
+    - `partnerships/`: مسارات الخادم وخدمة Prisma.
+  - `src/lib/`: مكتبات مساعدة عامة.
+    - `api-client.ts`, `prisma.ts`, `cloudinary.ts`, `auth.ts`, `api-validation.ts`.
+  - `src/types/`: تعريفات TypeScript للبيانات.
+  - `src/data/`: بيانات ثابتة أو أولية خارج قاعدة البيانات.
+  - `src/styles/`: أنماط CSS مشتركة.
+- `public/`: ملفات ثابتة مثل الصور.
+- `.env.example`: مثال لمتغيرات البيئة.

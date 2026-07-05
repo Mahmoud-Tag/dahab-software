@@ -60,3 +60,17 @@ export type TeamMemberJson = {
   created_at: string
   updated_at: string
 }
+
+export type PartnershipJson = {
+  id: number
+  title: string
+  partnerName: string
+  desc: string | null
+  fullDesc: string | null
+  image: string | null
+  imagePublicId: string | null
+  websiteUrl: string | null
+  status: string | null
+  created_at: string
+  updated_at: string
+}
