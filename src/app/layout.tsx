@@ -32,7 +32,15 @@ export const metadata: Metadata = {
     title: 'دهب سوفت وير | حلول برمجية احترافية',
     description: 'نحوّل الأفكار إلى منتجات رقمية قوية ومؤثرة.',
   },
-  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon/favicon.ico', sizes: '48x48' },
+      { url: '/favicon/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+    ],
+    apple: [{ url: '/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+  manifest: '/favicon/site.webmanifest',
 }
 
 export default function RootLayout({
@@ -43,8 +51,6 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
