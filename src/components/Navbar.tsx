@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import styles from './Navbar.module.css'
 
@@ -30,7 +31,14 @@ export default function Navbar() {
         {/* Brand */}
         <Link href="/" className={styles.navLogo} onClick={() => setMobileOpen(false)}>
           <div className={styles.navLogoMark}>
-            <span>D</span>
+            <Image
+              src="/logo.png"
+              alt="دهب سوفت وير"
+              width={48}
+              height={48}
+              priority
+              className={styles.logoImage}
+            />
           </div>
           <div className={styles.navLogoText}>
             <strong>دهب</strong>

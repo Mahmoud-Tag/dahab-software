@@ -35,7 +35,7 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <section id={id} style={{padding: 'clamp(1.5rem, 4vw, 3rem) 0' }}>
+    <section id={id} style={{ padding: 'clamp(1.5rem, 4vw, 3rem) 0' }}>
       <div className="container">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{

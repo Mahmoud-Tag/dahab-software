@@ -7,7 +7,7 @@ import styles from './ContactSection.module.css'
 
 const contactInfo = [
   { icon: 'fas fa-phone', label: 'هاتف', value: '+20 106 414 7224', dir: 'ltr' as const },
-  { icon: 'fas fa-envelope', label: 'البريد الإلكتروني', value: 'info@dahabtech.com', dir: 'ltr' as const },
+  { icon: 'fas fa-envelope', label: 'البريد الإلكتروني', value: 'info@dahabsoftware.com', dir: 'ltr' as const },
   { icon: 'fab fa-whatsapp', label: 'واتساب', value: '01064147224', dir: 'ltr' as const },
 ]
 
@@ -109,19 +109,22 @@ export default function ContactSection() {
 
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>الاسم الكامل</label>
+              <label htmlFor="name-input" className={styles.formLabel}>الاسم الكامل</label>
               <input
+                id="name-input"
                 type="text"
                 className={styles.formInput}
                 placeholder="أحمد محمد"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
+                aria-required="true"
               />
             </div>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>البريد الإلكتروني</label>
+              <label htmlFor="email-input" className={styles.formLabel}>البريد الإلكتروني</label>
               <input
+                id="email-input"
                 type="email"
                 className={styles.formInput}
                 placeholder="ahmed@company.com"
@@ -129,14 +132,16 @@ export default function ContactSection() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
+                aria-required="true"
               />
             </div>
           </div>
 
           <div className={styles.formRow}>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>رقم الهاتف</label>
+              <label htmlFor="phone-input" className={styles.formLabel}>رقم الهاتف</label>
               <input
+                id="phone-input"
                 type="tel"
                 className={styles.formInput}
                 placeholder="+20 106 ..."
@@ -146,31 +151,36 @@ export default function ContactSection() {
               />
             </div>
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>نوع الخدمة</label>
+              <label htmlFor="service-select" className={styles.formLabel}>نوع الخدمة</label>
               <select
+                id="service-select"
                 className={styles.formSelect}
                 value={form.service}
                 onChange={(e) => setForm({ ...form, service: e.target.value })}
               >
                 <option value="">اختر الخدمة</option>
-                <option>تطوير موقع ويب</option>
-                <option>تطبيق جوال</option>
-                <option>برنامج مخصص</option>
-                <option>استشارة تقنية</option>
-                <option>ذكاء اصطناعي</option>
+                <option>تطوير موقع ويب (Website)</option>
+                <option>تطبيق جوال (Mobile App)</option>
+                <option>نظام متكامل (ERP / CRM)</option>
+                <option>متجر إلكتروني (E-commerce)</option>
+                <option>ذكاء اصطناعي وتحليل بيانات</option>
+                <option>أمن سيبراني واختبار اختراق</option>
+                <option>استشارة تقنية / غير ذلك</option>
               </select>
             </div>
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.formLabel}>تفاصيل مشروعك</label>
+            <label htmlFor="message-input" className={styles.formLabel}>تفاصيل مشروعك</label>
             <textarea
+              id="message-input"
               className={styles.formTextarea}
               placeholder="اشرح لنا فكرتك ومتطلباتك..."
               rows={5}
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               required
+              aria-required="true"
             />
           </div>
 

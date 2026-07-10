@@ -35,18 +35,25 @@
 }
 
 .navLogoMark {
-  width: 38px;
-  height: 38px;
-  background: var(--gold-gradient);
+  width: 48px;
+  height: 48px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 1.2rem;
-  color: #0F172A;
-  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+.navLogoMark :global(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.logoImage {
+  display: block;
 }
 
 .navLogoText {
@@ -159,10 +166,12 @@
 .mobileToggle.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
+
 .mobileToggle.open span:nth-child(2) {
   opacity: 0;
   transform: scaleX(0);
 }
+
 .mobileToggle.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -232,14 +241,17 @@
   .navLinks {
     display: none;
   }
+
   .btnPrimary {
     display: none;
   }
+
   .mobileToggle {
     display: flex;
     margin-right: auto;
     margin-left: 0;
   }
+
   .mobileMenu {
     display: block;
   }

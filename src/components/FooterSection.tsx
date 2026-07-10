@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import styles from './FooterSection.module.css'
 
 const year = new Date().getFullYear()
@@ -34,7 +35,16 @@ export default function FooterSection() {
           {/* Brand */}
           <div className={styles.footerBrand}>
             <Link href="/" className={styles.footerLogo}>
-              <div className={styles.logoMark}>D</div>
+              <div className={styles.logoMark}>
+                <Image
+                  src="/logo.png"
+                  alt="دهب سوفت وير"
+                  width={56}
+                  height={56}
+                  priority
+                  className={styles.logoImage}
+                />
+              </div>
               <div className={styles.logoText}>
                 <strong>دهب</strong>
                 <span>سوفت وير</span>
