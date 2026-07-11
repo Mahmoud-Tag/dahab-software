@@ -38,7 +38,8 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
   const [activeFilter, setActiveFilter] = useState('all')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<ProjectJson | null>(null)
-  const [projects, setProjects] = useState<ProjectJson[]>([])
+  type ProjectWithSlug = ProjectJson & { slug?: string }
+  const [projects, setProjects] = useState<ProjectWithSlug[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -47,6 +48,8 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
         setProjects(
           data.map((project) => ({
             ...project,
+            // Build slug for the /portfolio/[slug] route when backend doesn't provide it.
+            slug: (project as { slug?: string }).slug || String(project.id),
             image: project.image || fallbackImages[project.type || ''] || '/portfolio-website.png',
             tags: normalizeJsonArray(project.tags),
             features: normalizeJsonArray(project.features),
@@ -68,6 +71,13 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
     setSelectedProject(project)
     setIsModalOpen(true)
   }
+
+  const canNavigateToProjectPage = (project: ProjectWithSlug) => {
+    // The app/[slug] route uses slugs from src/data/portfolio.
+    // Backend ProjectJson currently doesn't include `slug`, so avoid redirecting to broken routes.
+    return Boolean(project.slug && typeof project.slug === 'string' && project.slug.trim().length > 0 && project.slug !== String(project.id))
+  }
+
 
   const closeModal = () => {
     setIsModalOpen(false)
@@ -155,8 +165,26 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
               key={item.id}
               variants={itemVariants}
               className="premium-card portfolio-card"
-              onClick={() => openProject(item)}
             >
+              <button
+                type="button"
+                className="portfolio-card-details-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Prefer dedicated page route; keep modal code as fallback.
+                  // If slug is not available from API, modal will still work.
+                  // Only navigate when we are confident the slug exists in src/data/portfolio.
+                  // Otherwise, keep modal as the working fallback.
+                  if (canNavigateToProjectPage(item)) {
+                    const slug = item.slug as string
+                    window.location.href = `/portfolio/${slug}`
+                  } else {
+                    openProject(item)
+                  }
+
+                }}
+                aria-label={`عرض تفاصيل ${item.title}`}
+              />
               <div className="portfolio-thumb">
                 <img src={item.image!} alt={item.title} className="project-image" />
                 <div className="portfolio-thumb-overlay">
