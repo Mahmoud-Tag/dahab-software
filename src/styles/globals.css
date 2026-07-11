@@ -1069,10 +1069,18 @@ p {
 }
 
 .portfolio-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   padding: 0;
   cursor: pointer;
+}
+
+.portfolio-card-details-btn {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
 }
 
 .portfolio-thumb {

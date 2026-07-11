@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { fetchProjects } from '@/services/projects'
 import type { ProjectJson } from '@/types'
@@ -71,13 +72,6 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
     setSelectedProject(project)
     setIsModalOpen(true)
   }
-
-  const canNavigateToProjectPage = (project: ProjectWithSlug) => {
-    // The app/[slug] route uses slugs from src/data/portfolio.
-    // Backend ProjectJson currently doesn't include `slug`, so avoid redirecting to broken routes.
-    return Boolean(project.slug && typeof project.slug === 'string' && project.slug.trim().length > 0 && project.slug !== String(project.id))
-  }
-
 
   const closeModal = () => {
     setIsModalOpen(false)
@@ -166,23 +160,9 @@ export default function PortfolioSection({ hideHeader = false }: PortfolioSectio
               variants={itemVariants}
               className="premium-card portfolio-card"
             >
-              <button
-                type="button"
+              <Link
+                href={`/portfolio/${item.slug || item.id}`}
                 className="portfolio-card-details-btn"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  // Prefer dedicated page route; keep modal code as fallback.
-                  // If slug is not available from API, modal will still work.
-                  // Only navigate when we are confident the slug exists in src/data/portfolio.
-                  // Otherwise, keep modal as the working fallback.
-                  if (canNavigateToProjectPage(item)) {
-                    const slug = item.slug as string
-                    window.location.href = `/portfolio/${slug}`
-                  } else {
-                    openProject(item)
-                  }
-
-                }}
                 aria-label={`عرض تفاصيل ${item.title}`}
               />
               <div className="portfolio-thumb">
