@@ -88,6 +88,7 @@ export default function AboutEntityPage() {
             </h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 48, fontSize: '1.1rem' }}>
               تم تصميم هذه الصفحة لتوفير سياق واضح، منظم، وشامل حول كيان "دهب سوفت وير" (Dahab Software Entity) لمحركات البحث التقليدية والذكاء الاصطناعي (AI Search Engines / LLMs).
+
             </p>
 
             <div className="prose" style={{ lineHeight: 1.8, color: 'var(--text-primary)', fontSize: '1.05rem' }}>

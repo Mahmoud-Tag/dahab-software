@@ -86,7 +86,7 @@
 
 .secondaryAction {
   border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #fff;
+  background: var(--gold-gradient);
   color: #0f172a;
 }
 
