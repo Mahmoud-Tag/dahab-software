@@ -1,52 +1,54 @@
-import type { Metadata } from 'next'
-import '@/styles/globals.css'
-import SkipToContent from '@/components/SkipToContent'
-import WhatsAppFloat from '@/components/WhatsAppFloat'
+import type { Metadata } from "next";
+import "@/styles/globals.css";
+import SkipToContent from "@/components/SkipToContent";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://dahabsoftware.com'),
+  metadataBase: new URL("https://dahabsoftware.com"),
   title: {
-    default: 'دهب سوفت وير | حلول برمجية احترافية',
-    template: '%s | دهب سوفت وير',
+    default: "دهب سوفت وير | حلول برمجية احترافية",
+    template: "%s | دهب سوفت وير",
   },
-  description: 'دهب سوفت وير - نصمم حلول برمجية احترافية تدعم نمو أعمالك عبر الويب، التطبيقات، والذكاء الاصطناعي.',
-  alternates: { canonical: '/' },
+  description:
+    "دهب سوفت وير - نصمم حلول برمجية احترافية تدعم نمو أعمالك عبر الويب، التطبيقات، والذكاء الاصطناعي.",
+  alternates: { canonical: "/" },
   openGraph: {
-    title: 'دهب سوفت وير | حلول برمجية احترافية',
-    description: 'شريك تقني موثوق لبناء مواقع الشركات، الأنظمة الإدارية، وتطبيقات الذكاء الاصطناعي.',
-    url: 'https://dahabsoftware.com',
-    siteName: 'دهب سوفت وير',
-    locale: 'ar_AR',
-    type: 'website',
+    title: "دهب سوفت وير | حلول برمجية احترافية",
+    description:
+      "شريك تقني موثوق لبناء مواقع الشركات، الأنظمة الإدارية، وتطبيقات الذكاء الاصطناعي.",
+    url: "https://dahabsoftware.com",
+    siteName: "دهب سوفت وير",
+    locale: "ar_AR",
+    type: "website",
     images: [
       {
-        url: '/logo.png',
+        url: "/logo.png",
         width: 1200,
         height: 630,
-        alt: 'دهب سوفت وير - شعار الشركة',
+        alt: "دهب سوفت وير - شعار الشركة",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'دهب سوفت وير | حلول برمجية احترافية',
-    description: 'نحوّل الأفكار إلى منتجات رقمية قوية ومؤثرة.',
+    card: "summary_large_image",
+    title: "دهب سوفت وير | حلول برمجية احترافية",
+    description: "نحوّل الأفكار إلى منتجات رقمية قوية ومؤثرة.",
+    images: ["/logo.png"],
   },
   icons: {
     icon: [
-      { url: '/favicon/favicon.ico', sizes: '48x48' },
-      { url: '/favicon/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: "/logo.png", type: "image/png" },
+      { url: "/favicon/favicon.ico", sizes: "any" },
     ],
-    apple: [{ url: '/favicon/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    apple: [{ url: "/logo.png", sizes: "180x180", type: "image/png" }],
   },
-  manifest: '/favicon/site.webmanifest',
-}
+  manifest: "/favicon/site.webmanifest",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
@@ -72,5 +74,5 @@ export default function RootLayout({
         <WhatsAppFloat />
       </body>
     </html>
-  )
+  );
 }
