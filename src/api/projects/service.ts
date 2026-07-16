@@ -31,6 +31,20 @@ export async function createProject(parsed: ParsedProjectForm) {
     imagePublicId = uploaded.publicId
   }
 
+  const images: string[] = []
+  const imagePublicIds: string[] = []
+
+  if (parsed.imageFiles && parsed.imageFiles.length > 0) {
+    const uploadPromises = parsed.imageFiles.map((file) =>
+      uploadToCloudinary(file, `${parsed.title}-gallery`)
+    )
+    const uploadedFiles = await Promise.all(uploadPromises)
+    for (const uploaded of uploadedFiles) {
+      images.push(uploaded.url)
+      imagePublicIds.push(uploaded.publicId)
+    }
+  }
+
   const input: ProjectInput = {
     title: parsed.title,
     category: parsed.category,
@@ -38,6 +52,8 @@ export async function createProject(parsed: ParsedProjectForm) {
     fullDesc: parsed.fullDesc,
     image: imageUrl,
     imagePublicId,
+    images,
+    imagePublicIds,
     tags: parsed.tags,
     year: parsed.year,
     type: parsed.type,
@@ -53,6 +69,9 @@ export async function createProject(parsed: ParsedProjectForm) {
     return toProjectJson(project)
   } catch (error) {
     if (imagePublicId) await deleteFromCloudinary(imagePublicId)
+    for (const id of imagePublicIds) {
+      await deleteFromCloudinary(id)
+    }
     throw error
   }
 }
@@ -78,6 +97,44 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     uploadedImagePublicIdToCleanup = uploaded.publicId
   }
 
+  let images = existing.images || []
+  let imagePublicIds = existing.imagePublicIds || []
+  const newlyUploadedPublicIdsToCleanup: string[] = []
+
+  // Handle deletions
+  if (parsed.deletedImages && parsed.deletedImages.length > 0) {
+    const imagesToKeep: string[] = []
+    const publicIdsToKeep: string[] = []
+    
+    for (let i = 0; i < images.length; i++) {
+      if (parsed.deletedImages.includes(images[i])) {
+        if (imagePublicIds[i]) {
+          await deleteFromCloudinary(imagePublicIds[i])
+        } else {
+          await deleteProjectImageByUrl(images[i])
+        }
+      } else {
+        imagesToKeep.push(images[i])
+        publicIdsToKeep.push(imagePublicIds[i])
+      }
+    }
+    
+    images = imagesToKeep
+    imagePublicIds = publicIdsToKeep
+  }
+
+  if (parsed.imageFiles && parsed.imageFiles.length > 0) {
+    const uploadPromises = parsed.imageFiles.map((file) =>
+      uploadToCloudinary(file, `${parsed.title}-gallery`)
+    )
+    const uploadedFiles = await Promise.all(uploadPromises)
+    for (const uploaded of uploadedFiles) {
+      images.push(uploaded.url)
+      imagePublicIds.push(uploaded.publicId)
+      newlyUploadedPublicIdsToCleanup.push(uploaded.publicId)
+    }
+  }
+
   const input: ProjectInput = {
     title: parsed.title,
     category: parsed.category,
@@ -85,6 +142,8 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     fullDesc: parsed.fullDesc,
     image: imageUrl,
     imagePublicId,
+    images,
+    imagePublicIds,
     tags: parsed.tags,
     year: parsed.year,
     type: parsed.type,
@@ -109,6 +168,9 @@ export async function updateProject(id: number, parsed: ParsedProjectForm) {
     return toProjectJson(project)
   } catch (error) {
     if (uploadedImagePublicIdToCleanup) await deleteFromCloudinary(uploadedImagePublicIdToCleanup)
+    for (const id of newlyUploadedPublicIdsToCleanup) {
+      await deleteFromCloudinary(id)
+    }
     throw error
   }
 }
@@ -122,6 +184,16 @@ export async function deleteProject(id: number) {
     await deleteFromCloudinary(existing.imagePublicId)
   } else if (existing.image) {
     await deleteProjectImageByUrl(existing.image)
+  }
+
+  if (existing.imagePublicIds && existing.imagePublicIds.length > 0) {
+    for (const id of existing.imagePublicIds) {
+      await deleteFromCloudinary(id)
+    }
+  } else if (existing.images && existing.images.length > 0) {
+    for (const url of existing.images) {
+      await deleteProjectImageByUrl(url)
+    }
   }
   return true
 }

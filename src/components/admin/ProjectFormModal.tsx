@@ -34,6 +34,12 @@ export default function ProjectFormModal({
   })
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
+  
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [additionalImages, setAdditionalImages] = useState<File[]>([])
+  const [additionalPreviews, setAdditionalPreviews] = useState<string[]>([])
+  const [deletedImages, setDeletedImages] = useState<string[]>([])
+  
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -52,8 +58,16 @@ export default function ProjectFormModal({
         tags: project.tags || [],
         features: project.features || [],
       })
+      setExistingImages(project.images || [])
+      setDeletedImages([])
+      setAdditionalImages([])
+      setAdditionalPreviews([])
     } else {
       setForm((f) => ({ ...f, type: defaultType }))
+      setExistingImages([])
+      setDeletedImages([])
+      setAdditionalImages([])
+      setAdditionalPreviews([])
     }
   }, [project, defaultType])
 
@@ -63,6 +77,25 @@ export default function ProjectFormModal({
       setImageFile(file)
       setPreviewImage(URL.createObjectURL(file))
     }
+  }
+
+  const handleAdditionalFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length > 0) {
+      setAdditionalImages((prev) => [...prev, ...files])
+      const newPreviews = files.map((f) => URL.createObjectURL(f))
+      setAdditionalPreviews((prev) => [...prev, ...newPreviews])
+    }
+  }
+
+  const removeAdditionalImage = (index: number) => {
+    setAdditionalImages((prev) => prev.filter((_, i) => i !== index))
+    setAdditionalPreviews((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const removeExistingImage = (url: string) => {
+    setExistingImages((prev) => prev.filter((img) => img !== url))
+    setDeletedImages((prev) => [...prev, url])
   }
 
   const save = async (e: React.FormEvent) => {
@@ -88,6 +121,15 @@ export default function ProjectFormModal({
     formData.append('tags', JSON.stringify(form.tags))
     formData.append('features', JSON.stringify(form.features))
     if (imageFile) formData.append('image', imageFile)
+    
+    additionalImages.forEach((file) => {
+      formData.append('images', file)
+    })
+    
+    if (deletedImages.length > 0) {
+      formData.append('deletedImages', JSON.stringify(deletedImages))
+    }
+    
     if (project) formData.append('_method', 'PUT')
 
     try {
@@ -237,10 +279,10 @@ export default function ProjectFormModal({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm text-gray-400">صورة المشروع</label>
+            <label className="block text-sm text-gray-400">صورة الغلاف الأساسية</label>
             <div className="flex items-center gap-4">
               {(previewImage || project?.image) && (
-                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-800">
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-800 relative group">
                   <img
                     src={previewImage || project?.image || ''}
                     alt=""
@@ -251,9 +293,46 @@ export default function ProjectFormModal({
               <label className="flex-1 cursor-pointer">
                 <span className="block w-full rounded-xl bg-gray-800 p-3 text-center text-sm transition hover:bg-gray-700">
                   <i className="fas fa-cloud-upload-alt mr-2" />
-                  اختار صورة
+                  اختار صورة غلاف
                 </span>
                 <input type="file" onChange={handleFile} className="hidden" accept="image/*" />
+              </label>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm text-gray-400">صور إضافية للمشروع (معرض الصور)</label>
+            <div className="flex flex-wrap items-center gap-4">
+              {existingImages.map((url, idx) => (
+                <div key={url} className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-800 relative group">
+                  <img src={url} alt="" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(url)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition group-hover:opacity-100 text-red-500"
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                </div>
+              ))}
+              {additionalPreviews.map((preview, idx) => (
+                <div key={idx} className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-gray-800 relative group">
+                  <img src={preview} alt="" className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeAdditionalImage(idx)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition group-hover:opacity-100 text-red-500"
+                  >
+                    <i className="fas fa-trash-alt" />
+                  </button>
+                </div>
+              ))}
+              <label className="h-20 flex-1 cursor-pointer min-w-[150px]">
+                <span className="flex h-full w-full items-center justify-center rounded-xl bg-gray-800 p-3 text-center text-sm transition hover:bg-gray-700">
+                  <i className="fas fa-plus mr-2" />
+                  أضف صور
+                </span>
+                <input type="file" multiple onChange={handleAdditionalFiles} className="hidden" accept="image/*" />
               </label>
             </div>
           </div>

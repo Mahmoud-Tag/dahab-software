@@ -23,6 +23,7 @@ export function toProjectJson(project: Project) {
     desc: project.desc,
     fullDesc: project.fullDesc,
     image: project.image,
+    images: project.images,
     tags: normalizeJsonArray(project.tags),
     year: project.year,
     type: project.type,
@@ -56,6 +57,8 @@ export type ProjectInput = {
   fullDesc?: string | null
   image?: string | null
   imagePublicId?: string | null
+  images?: string[] | null
+  imagePublicIds?: string[] | null
   tags?: string[] | null
   year?: string | null
   type?: string | null
@@ -74,6 +77,8 @@ export function buildProjectData(input: ProjectInput): Prisma.ProjectCreateInput
     fullDesc: input.fullDesc ?? null,
     image: input.image ?? null,
     imagePublicId: input.imagePublicId ?? null,
+    images: input.images ?? [],
+    imagePublicIds: input.imagePublicIds ?? [],
     tags: input.tags ?? [],
     year: input.year ?? null,
     type: input.type ?? null,

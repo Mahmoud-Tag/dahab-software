@@ -22,6 +22,7 @@ const fallbackProjects: ProjectJson[] = [
     updated_at: new Date().toISOString(),
     views: 0,
     catIcon: '🛒',
+    images: [],
   },
   {
     id: 2,
@@ -43,6 +44,7 @@ const fallbackProjects: ProjectJson[] = [
     updated_at: new Date().toISOString(),
     views: 0,
     catIcon: '📱',
+    images: [],
   },
   {
     id: 3,
@@ -64,6 +66,7 @@ const fallbackProjects: ProjectJson[] = [
     updated_at: new Date().toISOString(),
     views: 0,
     catIcon: '⚙️',
+    images: [],
   },
 ]
 

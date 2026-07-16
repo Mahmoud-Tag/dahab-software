@@ -6,6 +6,7 @@ export type ProjectJson = {
   desc: string | null
   fullDesc: string | null
   image: string | null
+  images: string[]
   tags: string[]
   year: string | null
   type: string | null

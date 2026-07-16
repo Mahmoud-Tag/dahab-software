@@ -23,6 +23,8 @@ export type ParsedProjectForm = {
   status: string | null
   features: string[]
   imageFile: File | null
+  imageFiles: File[]
+  deletedImages: string[]
 }
 
 export async function parseProjectFormData(
@@ -45,6 +47,15 @@ export async function parseProjectFormData(
   const imageFile =
     imageEntry instanceof File && imageEntry.size > 0 ? imageEntry : null
 
+  const imageEntries = formData.getAll('images')
+  const imageFiles = imageEntries.filter((entry): entry is File => entry instanceof File && entry.size > 0)
+
+  const deletedImagesRaw = formData.get('deletedImages')
+  let deletedImages: string[] = []
+  if (typeof deletedImagesRaw === 'string') {
+    deletedImages = normalizeJsonArray(deletedImagesRaw)
+  }
+
   return {
     title: String(formData.get('title') ?? '').trim(),
     category: String(formData.get('category') ?? '').trim(),
@@ -59,6 +70,8 @@ export async function parseProjectFormData(
     status: optionalString(formData, 'status'),
     features,
     imageFile,
+    imageFiles,
+    deletedImages,
   }
 }
 

@@ -52,6 +52,8 @@ model Project {
   fullDesc      String?  @db.Text
   image         String?
   imagePublicId String?  @map("image_public_id")
+  images        String[] @default([])
+  imagePublicIds String[] @default([])
   tags          Json?
   year          String?
   type          String?

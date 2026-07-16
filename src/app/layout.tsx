@@ -11,67 +11,15 @@ export const metadata: Metadata = {
   },
   description:
     "دهب سوفت وير - نصمم حلول برمجية احترافية تدعم نمو أعمالك عبر الويب، التطبيقات، والذكاء الاصطناعي.",
-  keywords: [
-    "دهب سوفت وير",
-    "تطوير برمجيات",
-    "تطوير مواقع الشركات",
-    "تطبيقات الجوال",
-    "الذكاء الاصطناعي",
-    "أنظمة ERP",
-    "حوكمة رقمية",
-    "حلول سحابية",
-    "SEO",
-  ],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-
-      'max-video-preview': 'large',
-    },
-  },
-  applicationName: "دهب سوفت وير",
-  authors: [{ name: "دهب سوفت وير" }],
-  creator: "دهب سوفت وير",
-  publisher: "دهب سوفت وير",
-  category: "Software Development",
-  referrer: "origin-when-cross-origin",
-  manifest: "/manifest.webmanifest",
-
-  alternates: {
-    canonical: "https://dahabsoftware.com/",
-    languages: {
-      ar: "https://dahabsoftware.com/",
-    },
-  },
-
-  themeColor: "#0f172a",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
-
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "any" },
-      { url: "/android-chrome-192x192.png", type: "image/png", sizes: "192x192" },
-      { url: "/android-chrome-512x512.png", type: "image/png", sizes: "512x512" },
-    ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-  },
-
+  alternates: { canonical: "https://dahabsoftware.com/" },
   openGraph: {
-    type: "website",
-    url: "https://dahabsoftware.com/",
     title: "دهب سوفت وير | حلول برمجية احترافية",
     description:
       "شريك تقني موثوق لبناء مواقع الشركات، الأنظمة الإدارية، وتطبيقات الذكاء الاصطناعي.",
+    url: "https://dahabsoftware.com",
     siteName: "دهب سوفت وير",
     locale: "ar_AR",
+    type: "website",
     images: [
       {
         url: "/logo.png",
@@ -86,8 +34,19 @@ export const metadata: Metadata = {
     title: "دهب سوفت وير | حلول برمجية احترافية",
     description: "نحوّل الأفكار إلى منتجات رقمية قوية ومؤثرة.",
     images: ["/logo.png"],
-    creator: "@dahabsoftware",
   },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/icon.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -121,3 +80,4 @@ export default function RootLayout({
     </html>
   );
 }
+

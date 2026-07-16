@@ -22,6 +22,7 @@ type ApiProject = {
   desc: string | null
   fullDesc: string | null
   image: string | null
+  images?: string[]
   tags: string[]
   year: string | null
   type: string | null
@@ -41,6 +42,7 @@ type ProjectDetails = {
   category: string
   description: string
   image: string
+  images?: string[]
   technologies: string[]
   features: string[]
   year?: string | null
@@ -110,6 +112,7 @@ function normalizeProject(project: ProjectItem | ApiProject): ProjectDetails {
     category: project.category || portfolioTypeLabel(type),
     description: project.fullDesc || project.desc || 'تفاصيل هذا المشروع غير متاحة حاليًا.',
     image: project.image || fallbackImages[type] || '/portfolio-website.png',
+    images: 'images' in project && Array.isArray(project.images) ? project.images : [],
     technologies: project.tags ?? [],
     features: project.features?.length ? project.features : defaultFeatures,
     year: project.year,
@@ -275,13 +278,22 @@ export default async function ProjectPage({ params }: { params: RouteParams }) {
           </section>
 
           <section className={styles.gallery}>
-            <div>
+            <div className={styles.galleryHeader}>
               <span className={styles.sectionLabel}>معاينة</span>
               <h2>واجهة المشروع</h2>
-              <p>صورة توضيحية للمشروع المستهدف، ويتم تحديث المعرض بصور إضافية عند توفرها.</p>
+              <p>مجموعة من الصور التوضيحية للمشروع وواجهات الاستخدام.</p>
             </div>
-            <div className={styles.galleryImageWrap}>
-              <Image src={project.image} alt={`معاينة ${project.title}`} fill className={styles.galleryImage} sizes="(max-width: 768px) 100vw, 900px" />
+            
+            <div className={styles.galleryGrid}>
+              <div className={`${styles.galleryImageWrap} ${styles.main}`}>
+                <Image src={project.image} alt={`معاينة ${project.title}`} fill className={styles.galleryImage} sizes="(max-width: 768px) 100vw, 1200px" />
+              </div>
+              
+              {project.images && project.images.map((imgUrl, idx) => (
+                <div key={idx} className={styles.galleryImageWrap}>
+                  <Image src={imgUrl} alt={`معاينة إضافية ${idx + 1}`} fill className={styles.galleryImage} sizes="(max-width: 768px) 100vw, 600px" />
+                </div>
+              ))}
             </div>
           </section>
 
