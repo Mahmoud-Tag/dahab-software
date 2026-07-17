@@ -1,10 +1,6 @@
-- [ ] Redesign `src/app/portfolio/[slug]/page.tsx` UI from scratch (premium Enterprise SaaS case study layout)
-- [x] Reviewed existing page.tsx + current CSS (UI will be replaced fully)
+# TODO
 
-- [ ] Preserve all business logic/data fetching/metadata/components/links exactly (keep Navbar/Footer/Breadcrumbs/CTASection)
-- [ ] Add Count-up ready stats (client-side) and scroll reveal using Framer Motion-ready structure (without changing data logic)
-- [ ] Redesign: Hero, Statistics, Overview, Features, Technologies, Project Gallery (+ lightbox-ready), Project Information cards, Timeline, Workflow, Results, Testimonial, CTA
-- [ ] Completely rewrite `src/app/portfolio/[slug]/project.module.css` with tokens, spacing system, shadows, gradients, glass effects, animations, hover states, responsive breakpoints
-- [ ] Ensure RTL support and semantic HTML
-- [ ] Final validation: TypeScript correctness, no unused vars, no inline styles
+- [x] تعديل `src/app/portfolio/[slug]/project.module.css` ليصبح متجاوبًا أكثر على الهواتف الصغيرة (إضافة breakpoint ~420px وتخفيف ارتفاعات/هوامش Hero والمعرض + جعل الـ Grids عمودية عند الحاجة).
+- [ ] تشغيل المشروع وتجربة صفحة `/portfolio/[slug]` على أحجام مثل 375x667 و390x844 للتأكد من عدم حدوث تراكب/تمدد.
+
 
