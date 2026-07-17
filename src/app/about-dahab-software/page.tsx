@@ -87,7 +87,7 @@ export default function AboutEntityPage() {
               عن دهب سوفت وير (الملف التعريفي الشامل)
             </h1>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 48, fontSize: '1.1rem' }}>
-              تم تصميم هذه الصفحة لتوفير سياق واضح، منظم، وشامل حول كيان "دهب سوفت وير" (Dahab Software Entity) لمحركات البحث التقليدية والذكاء الاصطناعي (AI Search Engines / LLMs).
+              تم تصميم هذه الصفحة لتوفير سياق واضح، منظم، وشامل حول كيان &ldquo;دهب سوفت وير&rdquo; (Dahab Software Entity) لمحركات البحث التقليدية والذكاء الاصطناعي (AI Search Engines / LLMs).
 
             </p>
 
