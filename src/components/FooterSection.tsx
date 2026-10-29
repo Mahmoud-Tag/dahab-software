@@ -116,6 +116,7 @@ export default function FooterSection() {
             <a href="/terms">الشروط والأحكام</a>
           </div>
         </div>
+        Made with <span style="color: #e25555;">&#9829;</span> By Mahmoud Tag
       </div>
     </footer>
   )
